@@ -4,10 +4,9 @@ Formação de uma equipe para desenvolver atividades pertinentes a disciplina de
 Lider: Diogo Meneses de França
 
 Integrantes: 
-
-Carlos Eduardo Mariano Garcia Pereira
-Gilberto Reis Pereira De Souza Junior
-Marcos Felipe Da Silva Ribeiro
+Carlos Eduardo Mariano Garcia Pereira.
+Gilberto Reis Pereira De Souza Junior.
+Marcos Felipe Da Silva Ribeiro.
 
 
 #26/09
