@@ -208,6 +208,6 @@ END;
 DELIMITER ;
 
 
-
+06- De acordo com o seu projeto de banco de dados, pense em pelo menos 3 triggers úteis. Discuta com os seus colegas em relação à relevância e implemente-as.
 
 
