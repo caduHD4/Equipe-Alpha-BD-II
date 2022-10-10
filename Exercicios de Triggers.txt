@@ -148,3 +148,34 @@ DELIMITER ;
 
 
 
+•	Tabela(s)?
+
+	R:ITEM_VENDA
+•	Tempo?
+
+	R:BEFORE
+•	Evento?
+	
+	R:INSERT
+•	Implemente a trigger
+
+DELIMITER // 
+CREATE TRIGGER impedir_venda_produto_desconto
+BEFORE INSERT ON item_venda FOR EACH ROW
+BEGIN 
+DECLARE preco_produto DECIMAL (8,2); 
+    	DECLARE preco_unitario DECIMAL (8,2);
+    
+    SELECT preco_venda INTO preco_produto FROM produto WHERE id = NEW.produto_id;
+    SELECT preco_unidade INTO preco_unitario FROM item_venda;
+    
+    IF preco_produto * 0.5 > preco_unitario THEN
+		signal sqlstate '45000' set message_text = 'Valor de desconto inapropriado para venda';
+	END IF;
+END;
+//
+DELIMITER ;	
+–teste
+INSERT INTO item_venda(produto_id,venda_id,quantidade,preco_unidade) VALUES (1,1,4,27);
+
+
