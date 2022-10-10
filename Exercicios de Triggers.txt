@@ -33,6 +33,9 @@ INSERT ON cliente FOR EACH ROW
 //
 DELIMITER ;
 SELECT @teste;
+
+02- Uma trigger que tem a função adicionar a entrada de produtos no estoque deve ser associado para qual:
+
 - Faça a terceira que gere erro, impedindo a ação;
 DELIMITER //
 CREATE TRIGGER checa_cpf
