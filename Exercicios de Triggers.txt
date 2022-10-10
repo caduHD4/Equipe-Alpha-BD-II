@@ -96,3 +96,6 @@ DELIMITER ;
 –teste
 SELECT estoque FROM produto WHERE id = 1;
 
+03- Uma trigger que tem a função criar um registro de auditoria quando um pagamento e recebimento for alterada deve ser associado para qual(is):
+
+
