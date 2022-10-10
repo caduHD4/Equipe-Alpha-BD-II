@@ -89,7 +89,7 @@ DELIMITER //
 CREATE TRIGGER adicao_estoque
 AFTER INSERT ON item_venda FOR EACH ROW
 BEGIN 
-	UPDATE produto SET estoque = estoque + NEW.quantidade WHERE produto.id = NEW.produto_id;
+	UPDATE produto SET estoque = estoque + OLD.quantidade WHERE produto.id = OLD.produto_id;
 END;
 //
 DELIMITER ;
@@ -179,5 +179,35 @@ DELIMITER ;
 INSERT INTO item_venda(produto_id,venda_id,quantidade,preco_unidade) VALUES (1,1,4,27);
 
 05- Este é para testar a sintaxe - tente implementar sem o script
+Uma trigger que tem a função de gerar o RA automático na tabela ALUNO deve ser associada para qual
+
+•	Tabela(s)?
+
+	R:ALUNO
+•	Tempo?
+
+	R:BEFORE
+•	Evento?
+	
+	R:INSERT
+•	Precisa de variáveis? Quais?
+	
+	R:Sim é necessario.
+•	Implemente a trigger - RA igual a concatenação do ano corrente, código do curso e o id do cadastro do aluno. 
+
+DELIMITER //
+CREATE TRIGGER ra_auto
+BEFORE INSERT ON aluno 
+FOR EACH ROW
+BEGIN
+DECLARE ra VARCHAR (200);
+      	IF NEW.aluno_id THEN
+		UPDATE aluno SET ra = CONCAT(NEW.DATA_CADASTRO(YYYY), NEW.curso_id, NEW.id);
+END;
+//
+DELIMITER ;
+
+
+
 
 
