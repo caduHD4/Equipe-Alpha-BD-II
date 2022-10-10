@@ -144,5 +144,7 @@ END;
 //
 DELIMITER ;
 
+04- Uma trigger que tem a função impedir a venda de um produto inferior a 50% do preço de venda deve ser associado para qual:
+
 
 
