@@ -99,3 +99,50 @@ SELECT estoque FROM produto WHERE id = 1;
 03- Uma trigger que tem a função criar um registro de auditoria quando um pagamento e recebimento for alterada deve ser associado para qual(is):
 
 
+•	Tabela(s)?
+
+	R:PAGAMENTO e RECEBIMENTO
+•	Tempo?
+
+	R:AFTER
+•	Evento?
+	
+	R:UPDATE
+•	Implemente a trigger (pode criar a tabela de auditoria)
+
+CREATE TABLE auditoria_pagamento(
+id INT NOT NULL AUTO_INCREMENT
+, pagamento_id INT NOT NULL
+, data_hora_alteracao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+,CONSTRAINT auditoria_pagamento_pk PRIMARY KEY (id)
+);
+ 
+CREATE TABLE auditoria_recebimento(
+id INT NOT NULL AUTO_INCREMENT
+, recebimento_id INT NOT NULL
+, data_hora_alteracao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+,CONSTRAINT auditoria_recebimento_pk PRIMARY KEY (id)
+);
+ 
+DELIMITER //
+CREATE TRIGGER monitora_pagamento
+AFTER UPDATE ON pagamento
+FOR EACH ROW
+BEGIN
+      	INSERT INTO auditoria_pagamento (pagamento_id) VALUES (NEW.pagamento.id);
+END;
+//
+DELIMITER ;
+ 
+DELIMITER //
+CREATE TRIGGER monitora_recebimento
+AFTER UPDATE ON recebimento
+FOR EACH ROW
+BEGIN
+      	INSERT INTO auditoria_recebimento (recebimento_id) VALUES (NEW.recebimento.id);
+END;
+//
+DELIMITER ;
+
+
+
