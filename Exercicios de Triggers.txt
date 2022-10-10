@@ -1,4 +1,64 @@
-ALUNOS: CARLOS EDUARDO MARIANO GARCIA PEREIRA, DIOGO MENESES DE FRAN�A e MARCOS FELIPE DA SILVA RIBEIRO
-Exerc�cios de fixa��o - utilize o script do estudo de caso
+ALUNOS: CARLOS EDUARDO MARIANO GARCIA PEREIRA, DIOGO MENESES DE FRANÇA e MARCOS FELIPE DA SILVA RIBEIRO
+Exercícios de fixação - utilize o script do estudo de caso
 
-01- Escreva quarto triggers de sintaxe - a trigger n�o precisa ter funcionalidade, basta n�o dar erro de sintaxe. Use vari�vel global para testar.
+01- Escreva quarto triggers de sintaxe - a trigger não precisa ter funcionalidade, basta não dar erro de sintaxe. Use variável global para testar.
+
+- Faça uma declarando variáveis e com select into; 
+SET @teste = 0;
+DELIMITER // 
+CREATE TRIGGER declarando_variaveis 
+BEFORE
+INSERT ON cliente FOR EACH ROW 
+	BEGIN
+		SELECT CPF_CNPJ FROM cliente WHERE cliente.id = 1 INTO @teste;
+	END;
+SELECT @teste; 
+//
+DELIMITER ;
+- Faça a segunda com uma estrutura de decisão; 
+
+SET @teste = "Erro";
+DELIMITER // 
+CREATE TRIGGER estrutura_decisao 
+AFTER
+INSERT ON cliente FOR EACH ROW 
+	BEGIN
+    	DECLARE CPF_CNPJ VARCHAR(100);
+    	IF LENGTH(NEW.CPF_CNPJ) <= 14 THEN
+		SET @teste = "Os dados são válidos";
+	ELSE
+		SET @teste = "Dados inválidos";
+		END IF;
+	END;
+//
+DELIMITER ;
+SELECT @teste;
+- Faça a terceira que gere erro, impedindo a ação;
+DELIMITER //
+CREATE TRIGGER checa_cpf
+BEFORE INSERT ON cliente
+FOR EACH ROW
+BEGIN
+      	IF LENGTH(NEW.CPF_CNPJ) > 11 THEN
+                	SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "NÚMERO DE CARACTERES EXCEDIDO";
+      	END IF;
+END;
+ 
+//
+DELIMITER ;
+
+- Faça a quarta que utilize a variável new e old - tente diferenciar. 
+
+DELIMITER //
+CREATE TRIGGER validar_alteracao_cliente_inativo
+ BEFORE UPDATE ON cliente
+ FOR EACH ROW
+ BEGIN
+     IF NEW.ativo <> OLD.ativo AND
+        EXISTS(SELECT * FROM conta_receber WHERE CLIENTE_ID = NEW.id)
+    THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'ALTERAÇÃO INVÁLIDA - CLIENTE POSSUI DÍVIDA ';
+     END IF;
+ END
+ //
+DELIMITER ;
