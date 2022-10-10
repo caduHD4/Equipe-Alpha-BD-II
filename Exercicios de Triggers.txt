@@ -1,0 +1,4 @@
+ALUNOS: CARLOS EDUARDO MARIANO GARCIA PEREIRA, DIOGO MENESES DE FRANÇA e MARCOS FELIPE DA SILVA RIBEIRO
+Exercícios de fixação - utilize o script do estudo de caso
+
+01- Escreva quarto triggers de sintaxe - a trigger não precisa ter funcionalidade, basta não dar erro de sintaxe. Use variável global para testar.
