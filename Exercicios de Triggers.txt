@@ -178,4 +178,6 @@ DELIMITER ;
 –teste
 INSERT INTO item_venda(produto_id,venda_id,quantidade,preco_unidade) VALUES (1,1,4,27);
 
+05- Este é para testar a sintaxe - tente implementar sem o script
+
 
