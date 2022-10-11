@@ -18,4 +18,4 @@ email: mcfelipe_pvai@hotmail.com
 https://docs.google.com/document/d/14eWd7QDKO3t64lPh_WaD0_pXVkYTG7Ar5o8AkqkEZAU/edit?usp=sharing
 
 Link de autoavaliação do grupo
-https://docs.google.com/spreadsheets/d/1lgCEaHHzZwsINxHkDBKJFzo4qdflWW3-/edit#gid=200908641
+https://docs.google.com/spreadsheets/d/1DlCS5COokeU1E2ROL1pwr2gLlAV1NwUmG-C0InKmRTY/edit#gid=0
