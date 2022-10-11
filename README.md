@@ -6,6 +6,7 @@ LIDER: Diogo Meneses de França
 INTEGRANTES: 
 
 Carlos Eduardo Mariano Garcia Pereira
+email: cadumarianogarciapereira@gmail.com
 
 Gilberto Reis Pereira De Souza Junior
 
