@@ -103,3 +103,20 @@ BEFORE UPDATE ON cliente FOR EACH ROW
 DELIMITER ;
 
 UPDATE cliente SET CPF_CNPJ = '555.555.555-55' WHERE ID = 1;
+
+
+/*
+- Faça a quarta que utilize a variável new e old - tente diferenciar. */
+
+DELIMITER //
+CREATE TRIGGER validar_alteracao_cliente_inativo
+ BEFORE UPDATE ON cliente FOR EACH ROW
+	BEGIN
+		IF NEW.ativo <> OLD.ativo AND
+			EXISTS(SELECT * FROM conta_receber WHERE CLIENTE_ID = NEW.id)
+		THEN
+			SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'ALTERAÇÃO INVÁLIDA - CLIENTE POSSUI DÍVIDA ';
+		END IF;
+	END
+ //
+DELIMITER ;
