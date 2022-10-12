@@ -120,3 +120,24 @@ CREATE TRIGGER validar_alteracao_cliente_inativo
 	END
  //
 DELIMITER ;
+
+/*
+02- Uma trigger que tem a função adicionar a entrada de produtos no estoque deve ser associado para qual:
+•	Tabela? 	ITEM_VENDA
+•	Tempo? 		AFTER
+•	Evento? 	INSERT
+•	Precisa de variáveis? Quais? 	Nenhuma, pois será usado UPDATE
+•	Implemente a trigger. 
+*/
+
+DELIMITER // 
+CREATE TRIGGER adicao_estoque
+AFTER 
+INSERT ON item_venda FOR EACH ROW
+BEGIN 
+	UPDATE produto SET estoque = estoque + NEW.quantidade WHERE produto.id = NEW.produto_id;
+END;
+//
+DELIMITER ;
+
+SELECT estoque FROM produto WHERE id = 1;
