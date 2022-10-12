@@ -65,3 +65,26 @@ DELIMITER ;
 
 SELECT @teste1; 
 
+
+
+
+/*
+- Faça a segunda com uma estrutura de decisão; */
+
+SET @teste2 = "Erro";
+
+DELIMITER // 
+CREATE TRIGGER estrutura_decisao 
+AFTER
+INSERT ON cliente FOR EACH ROW 
+	BEGIN
+    	IF LENGTH(NEW.CPF_CNPJ) <= 14 THEN
+		SET @teste2 = "Os dados são válidos";
+	ELSE
+		SET @teste2 = "Dados inválidos";
+		END IF;
+	END;
+//
+DELIMITER ;
+
+SELECT @teste2;
