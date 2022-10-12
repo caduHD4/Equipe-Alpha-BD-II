@@ -88,3 +88,20 @@ INSERT ON cliente FOR EACH ROW
 DELIMITER ;
 
 SELECT @teste2;
+
+
+/*
+- Faça a terceira que gere erro, impedindo a ação; */
+drop trigger verifica_cpf;
+DELIMITER //
+CREATE TRIGGER verifica_cpf
+BEFORE UPDATE ON cliente FOR EACH ROW
+	BEGIN
+      	IF LENGTH(NEW.CPF_CNPJ) > 14 OR LENGTH(NEW.CPF_CNPJ) < 14 THEN
+                	SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "NÚMERO DE CARACTERES INCORRETO";
+      	END IF;
+	END;
+//
+DELIMITER ;
+
+UPDATE cliente SET CPF_CNPJ = '555.555.555-55' WHERE ID = 1;
