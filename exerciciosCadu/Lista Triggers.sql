@@ -66,8 +66,6 @@ DELIMITER ;
 SELECT @teste1; 
 
 
-
-
 /*
 - Faça a segunda com uma estrutura de decisão; */
 
