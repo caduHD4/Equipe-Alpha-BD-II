@@ -333,7 +333,7 @@ SELECT estoque FROM produto WHERE id = 1;
 
 DELIMITER //
 CREATE TRIGGER registro_auditoria_p
-BEFORE
+AFTER
 UPDATE ON pagamento FOR EACH ROW
 	BEGIN 
 		INSERT INTO auditoria(id, new_id, nome_tabela, descricao, new_descricao, valor, new_valor, data_hora)
@@ -344,7 +344,7 @@ DELIMITER ;
 
 DELIMITER //
 CREATE TRIGGER registro_auditoria_r
-BEFORE
+AFTER
 UPDATE ON recebimento FOR EACH ROW
 	BEGIN 
 		INSERT INTO auditoria(id, new_id, nome_tabela, descricao, new_descricao, valor, new_valor, data_hora)
