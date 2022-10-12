@@ -43,3 +43,25 @@ INSERT INTO cliente (nome_completo,CPF_CNPJ,ativo) values ('MARIANA ANTUNES','44
 INSERT INTO produto (nome,preco_custo,preco_venda,estoque) values ('COCA-COLA',4.0,5.5,30);
 INSERT INTO produto (nome,preco_custo,preco_venda,estoque) values ('CHOKITO',2.3,4.5,60);
 INSERT INTO produto (nome,preco_custo,preco_venda,estoque) values ('BACONZITOS',4.7,9.0,80);
+
+
+/*
+Exercícios de fixação - utilize o script do estudo de caso
+https://github.com/heliokamakawa/curso_bd/blob/master/16b-trigger%20script%20base.sql
+01- Escreva quatro triggers de sintaxe - a trigger não precisa ter funcionalidade, basta não dar erro de sintaxe. Use variável global para testar.
+- Faça uma declarando variáveis e com select into; */
+
+SET @teste1 = 'CARLOS';
+
+DELIMITER // 
+CREATE TRIGGER variaveis 
+BEFORE
+INSERT ON cliente FOR EACH ROW 
+		BEGIN
+			SELECT nome_completo FROM cliente WHERE cliente.id = 3 INTO @teste1;
+		END;
+//
+DELIMITER ;
+
+SELECT @teste1; 
+
