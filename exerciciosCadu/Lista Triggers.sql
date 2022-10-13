@@ -381,3 +381,24 @@ END;
 DELIMITER ;	
 
 INSERT INTO item_venda(produto_id,venda_id,quantidade,preco_unidade) VALUES (1,1,4,27);
+
+/*
+05- Este é para testar a sintaxe - tente implementar sem o script
+Uma trigger que tem a função de gerar o RA automático na tabela ALUNO deve ser associada para qual
+•	Tabela? Aluno
+•	Tempo? AFTER
+•	Evento? INSERT
+•	Precisa de variáveis? Quais? não
+•	Implemente a trigger - RA igual a concatenção do ano corrente, código do curso e o id do cadastro do aluno. 
+*/
+
+DELIMITER //
+
+CREATE TRIGGER ra_auto
+AFTER 
+INSERT ON aluno FOR EACH ROW
+	BEGIN
+      	INSERT INTO aluno.ra VALUES (CONCAT(NEW.DATA_CADASTRO(YYYY), NEW.curso_id, NEW.id));
+	END;
+//
+DELIMITER ;
