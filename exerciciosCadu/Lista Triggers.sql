@@ -352,3 +352,32 @@ UPDATE ON recebimento FOR EACH ROW
 	END
 //
 DELIMITER ;
+
+
+/*
+04- Uma trigger que tem a função impedir a venda de um produto inferior a 50% do preço de venda deve ser associado para qual:
+•	Tabela? item_venda
+•	Tempo? BEFORE
+•	Evento? INSERT
+•	Implemente a trigger
+*/
+
+DELIMITER // 
+CREATE TRIGGER impedir_venda_produto_desconto
+BEFORE 
+INSERT ON item_venda FOR EACH ROW
+	BEGIN 
+		DECLARE preco_produto DECIMAL (8,2); 
+    	DECLARE preco_unitario DECIMAL (8,2);
+    
+		SELECT preco_venda INTO preco_produto FROM produto WHERE id = NEW.produto_id;
+		SELECT preco_unidade INTO preco_unitario FROM item_venda;
+    
+		IF preco_produto * 0.5 > preco_unitario THEN
+			signal sqlstate '45000' set message_text = 'Valor de desconto inapropriado para venda';
+		END IF;
+END;
+//
+DELIMITER ;	
+
+INSERT INTO item_venda(produto_id,venda_id,quantidade,preco_unidade) VALUES (1,1,4,27);
