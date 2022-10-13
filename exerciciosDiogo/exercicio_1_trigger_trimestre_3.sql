@@ -117,4 +117,3 @@ DELIMITER //
 
 UPDATE produto SET preco_venda = 6 WHERE id = 1;
 SELECT @teste;
-
