@@ -64,10 +64,24 @@ INSERT INTO cliente (nome_completo,CPF_CNPJ) values ('DIOGO M FRANCA','346.111.2
 SELECT @var;
 
 -- Faça a segunda com uma estrutura de decisão; 
+SET @decisao = 0;
 
+DELIMITER //
+CREATE TRIGGER estrut_decisao
+AFTER UPDATE ON cliente
+FOR EACH ROW
+BEGIN
+	IF (NEW.ativo = "N" or NEW.ativo = "n") THEN
+		SET @decisao = "Cliente Inativado!";
+	ELSE
+		SET @decisao = "Cliente ativo!";
+	END IF;
+END;
+//
+DELIMITER ;
+UPDATE cliente SET ativo = "N" WHERE id = 1;
+SELECT @decisao;
 
-UPDATE produto SET preco_venda = 6 WHERE id = 1;
-SELECT @teste;
 
 -- Faça a terceira que gere erro, impedindo a ação;
 
@@ -100,3 +114,6 @@ BEGIN
 END;
 //
 DELIMITER //
+
+UPDATE produto SET preco_venda = 6 WHERE id = 1;
+SELECT @teste;
