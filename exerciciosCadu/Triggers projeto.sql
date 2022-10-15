@@ -59,11 +59,21 @@ id INT NOT NULL AUTO_INCREMENT
 ,descricao VARCHAR(200) NOT NULL
 ,remedio_tipo VARCHAR (14) NOT NULL
 ,marca VARCHAR(14) NOT NULL
-,preco INT NOT NULL
+,preco DECIMAL(10,2) NOT NULL
 ,validade DATETIME NOT NULL
 ,estoque INT NOT NULL
 ,filial_id INT NOT NULL, FOREIGN KEY (filial_id) REFERENCES filial (id)
 ,CONSTRAINT pk_remedio PRIMARY KEY (id)
+);
+
+CREATE TABLE audi_remedio(
+id INT NULL AUTO_INCREMENT
+,nome VARCHAR(24) NOT NULL
+,marca VARCHAR(14) NOT NULL
+,antigo_preco DECIMAL(10,2) NOT NULL
+,novo_preco DECIMAL(10,2) NOT NULL
+,data_alteracao DATETIME DEFAULT CURRENT_TIMESTAMP
+,CONSTRAINT pk_audi_remedio PRIMARY KEY (id)
 );
 
 CREATE TABLE fpagamento(
@@ -106,7 +116,7 @@ AFTER
 INSERT ON item_venda FOR EACH ROW
 	BEGIN 
         UPDATE remedio set remedio.estoque = remedio.estoque - NEW.quantidade
-        WHERE remedio.id = remedio_id;
+        WHERE remedio.id = NEW.remedio_id;
     END;
 //
 DELIMITER ;	
@@ -121,7 +131,7 @@ INSERT ON item_venda FOR EACH ROW
         DECLARE remedio_validade;
 		SELECT validade INTO remedio_validade FROM remedio WHERE id = NEW.remedio_id;
 
-		IF NOW() > validade THEN
+		IF NOW() > remedio_validade THEN
 			signal sqlstate '45000' set message_text = 'Inapropriado para venda - Fora da validade';
 		END IF;
 	END;
@@ -129,3 +139,21 @@ INSERT ON item_venda FOR EACH ROW
 END;
 //
 DELIMITER ;	
+
+
+/*Trigger monitora a alteração nos preços dos remedios*/
+
+DELIMITER //
+CREATE TRIGGER auditoria_remedio
+AFTER
+UPDATE ON remedio FOR EACH ROW
+    BEGIN
+        IF NEW.preco < OLD.preco THEN
+            INSERT INTO audi_remedio (nome, marca, antigo_preco, novo_preco) 
+            VALUES (NEW.nome, NEW.marca, OLD.preco, NEW.preco);
+        END IF;
+    END;
+
+//
+DELIMITER
+

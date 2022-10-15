@@ -313,9 +313,9 @@ DELIMITER ;
 DELIMITER // 
 CREATE TRIGGER adicao_estoque
 AFTER 
-INSERT ON item_venda FOR EACH ROW
+INSERT ON Icompra FOR EACH ROW
 	BEGIN 
-		UPDATE produto SET estoque = estoque + NEW.quantidade WHERE produto.id = NEW.produto_id;
+		UPDATE produto SET estoque = old.estoque + NEW.quantidade WHERE produto.id = NEW.produto_id;
 	END;
 //
 DELIMITER ;
