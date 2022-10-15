@@ -101,8 +101,8 @@ CREATE TRIGGER baixa_de_estoque
 AFTER 
 INSERT ON item_venda FOR EACH ROW
 	BEGIN 
-        UPDATE remedio set remedio.
-		
+        UPDATE remedio set remedio.estoque = remedio.estoque - NEW.quantidade
+        WHERE remedio.id = remedio_id;
     END;
 //
 DELIMITER ;	
