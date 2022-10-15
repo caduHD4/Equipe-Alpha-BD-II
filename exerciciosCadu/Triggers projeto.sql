@@ -60,6 +60,7 @@ id INT NOT NULL AUTO_INCREMENT
 ,remedio_tipo VARCHAR (14) NOT NULL
 ,marca VARCHAR(14) NOT NULL
 ,preco INT NOT NULL
+,validade DATETIME NOT NULL
 ,estoque INT NOT NULL
 ,filial_id INT NOT NULL, FOREIGN KEY (filial_id) REFERENCES filial (id)
 ,CONSTRAINT pk_remedio PRIMARY KEY (id)
@@ -90,6 +91,7 @@ CREATE TABLE item_venda(
 id INT NOT NULL AUTO_INCREMENT
 ,quantidade VARCHAR(200) NOT NULL
 ,preco_unidade INT NOT NULL
+,data_venda DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ,PRIMARY KEY (id)
 ,venda_id INT NOT NULL, FOREIGN KEY (venda_id) REFERENCES venda(id)
 ,remedio_id INT NOT NULL, FOREIGN KEY (remedio_id) REFERENCES remedio(id)
@@ -106,5 +108,24 @@ INSERT ON item_venda FOR EACH ROW
         UPDATE remedio set remedio.estoque = remedio.estoque - NEW.quantidade
         WHERE remedio.id = remedio_id;
     END;
+//
+DELIMITER ;	
+
+/* Trigger que impede a venda se o remedio estiver vencido*/
+
+DELIMITER // 
+CREATE TRIGGER impedir_venda_remedio_vencido
+BEFORE 
+INSERT ON item_venda FOR EACH ROW
+	BEGIN 
+        DECLARE remedio_validade;
+		SELECT validade INTO remedio_validade FROM remedio WHERE id = NEW.remedio_id;
+
+		IF NOW() > validade THEN
+			signal sqlstate '45000' set message_text = 'Inapropriado para venda - Fora da validade';
+		END IF;
+	END;
+		
+END;
 //
 DELIMITER ;	
