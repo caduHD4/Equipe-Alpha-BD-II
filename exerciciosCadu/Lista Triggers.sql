@@ -205,7 +205,7 @@ id INT NOT NULL auto_increment
 );
 
 CREATE TABLE auditoria (
-id INT NOT NULL
+old_id INT NOT NULL
 ,new_id INT NOT NULL
 ,nome_tabela VARCHAR(40)
 ,descricao VARCHAR(200)
@@ -314,9 +314,9 @@ DELIMITER //
 CREATE TRIGGER adicao_estoque
 AFTER 
 INSERT ON item_venda FOR EACH ROW
-BEGIN 
-	UPDATE produto SET estoque = estoque + NEW.quantidade WHERE produto.id = NEW.produto_id;
-END;
+	BEGIN 
+		UPDATE produto SET estoque = estoque + NEW.quantidade WHERE produto.id = NEW.produto_id;
+	END;
 //
 DELIMITER ;
 
@@ -336,7 +336,7 @@ CREATE TRIGGER registro_auditoria_p
 AFTER
 UPDATE ON pagamento FOR EACH ROW
 	BEGIN 
-		INSERT INTO auditoria(id, new_id, nome_tabela, descricao, new_descricao, valor, new_valor, data_hora)
+		INSERT INTO auditoria(old_id, new_id, nome_tabela, descricao, new_descricao, valor, new_valor, data_hora)
         VALUES (OLD.id, NEW.id, 'pagamento', OLD.descricao, NEW.descricao, OLD.valor, NEW.valor, NOW());
 	END
 //
@@ -347,7 +347,7 @@ CREATE TRIGGER registro_auditoria_r
 AFTER
 UPDATE ON recebimento FOR EACH ROW
 	BEGIN 
-		INSERT INTO auditoria(id, new_id, nome_tabela, descricao, new_descricao, valor, new_valor, data_hora)
+		INSERT INTO auditoria(old_id, new_id, nome_tabela, descricao, new_descricao, valor, new_valor, data_hora)
         VALUES (OLD.id, NEW.id, 'recebimento', OLD.descricao, NEW.descricao, OLD.valor, NEW.valor, NOW());
 	END
 //
@@ -396,12 +396,14 @@ DELIMITER //
 
 CREATE TRIGGER ra_auto
 AFTER 
-INSERT ON aluno FOR EACH ROW
+INSERT ON matricula FOR EACH ROW
 	BEGIN
-      	INSERT INTO aluno.ra VALUES (CONCAT(NEW.DATA_CADASTRO(YYYY), NEW.curso_id, NEW.id));
+		DECLARE ano VARCHAR(10);
+		SELECT year(CURRENT_TIMESTAMP) INTO ano;
+      	INSERT INTO aluno.ra VALUES (CONCAT(ano, NEW.curso_id, NEW.id));
 	END;
 //
 DELIMITER ;
 
 
-SELECT 
+SELECT FROM produto
