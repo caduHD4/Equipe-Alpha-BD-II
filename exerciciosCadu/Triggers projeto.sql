@@ -60,6 +60,7 @@ id INT NOT NULL AUTO_INCREMENT
 ,remedio_tipo VARCHAR (14) NOT NULL
 ,marca VARCHAR(14) NOT NULL
 ,preco INT NOT NULL
+,estoque INT NOT NULL
 ,filial_id INT NOT NULL, FOREIGN KEY (filial_id) REFERENCES filial (id)
 ,CONSTRAINT pk_remedio PRIMARY KEY (id)
 );
@@ -93,3 +94,15 @@ id INT NOT NULL AUTO_INCREMENT
 ,venda_id INT NOT NULL, FOREIGN KEY (venda_id) REFERENCES venda(id)
 ,remedio_id INT NOT NULL, FOREIGN KEY (remedio_id) REFERENCES remedio(id)
 );
+
+
+DELIMITER // 
+CREATE TRIGGER baixa_de_estoque
+AFTER 
+INSERT ON item_venda FOR EACH ROW
+	BEGIN 
+        UPDATE remedio set remedio.
+		
+    END;
+//
+DELIMITER ;	
