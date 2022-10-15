@@ -210,4 +210,32 @@ DELIMITER ;
 
 06- De acordo com o seu projeto de banco de dados, pense em pelo menos 3 triggers úteis. Discuta com os seus colegas em relação à relevância e implemente-as.
 
+DELIMITER //
+CREATE TRIGGER venda_estoque
+BEFORE INSERT ON iten_venda
+FOR EACH ROW
+BEGIN
+		DECLARE estocagem INT;
+        DECLARE quantia INT;
+       
+		SELECT quantidade INTO quantia FROM iten_venda; 
+        SELECT estoque INTO estocagem FROM produto WHERE id = NEW.produto_id;
+        
+      	IF quantia > estocagem THEN
+			BEGIN
+				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Quantidade de produtos para venda é superior ao estoque disponivel";
+			END;
+		ELSEIF quantia = estocagem THEN
+			BEGIN
+				UPDATE produto SET situaçao = 'E' WHERE produto.id = NEW.produto_id;
+            END;
+		ELSE
+			BEGIN
+				UPDATE produto SET estoque = estoque - NEW.quantidade WHERE produto.id = NEW.produto_id;
+            END;
+      	END IF;
+END;
+//
+DELIMITER ;
 
+SELECT estoque,situaçao FROM produto;
