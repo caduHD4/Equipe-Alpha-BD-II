@@ -404,6 +404,3 @@ INSERT ON matricula FOR EACH ROW
 	END;
 //
 DELIMITER ;
-
-
-SELECT FROM produto
