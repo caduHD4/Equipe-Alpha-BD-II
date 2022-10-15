@@ -95,6 +95,8 @@ id INT NOT NULL AUTO_INCREMENT
 ,remedio_id INT NOT NULL, FOREIGN KEY (remedio_id) REFERENCES remedio(id)
 );
 
+/* Trigger acionado quando é feito algum INSERT na tabela item_venda,
+diminuindo a quantidade no estoque*/
 
 DELIMITER // 
 CREATE TRIGGER baixa_de_estoque
