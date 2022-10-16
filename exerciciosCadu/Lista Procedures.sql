@@ -256,14 +256,14 @@ SELECT @teste1;
 */
 
 SET @teste2 = "Erro";
-
+drop PROCEDURE estrutura_decisao;
 DELIMITER // 
 CREATE PROCEDURE estrutura_decisao(cpf_cnpj VARCHAR(45))
 	BEGIN
     	IF LENGTH(cpf_cnpj) > 14 OR LENGTH(cpf_cnpj) < 14 THEN
-		SET @teste2 = "Os dados são válidos";
+		SET @teste2 = "Os dados são invalidos";
 	ELSE
-		SET @teste2 = "Dados Validados";
+		SET @teste2 = "Os dados são válidos";
 		END IF;
 	END;
 //
