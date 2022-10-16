@@ -226,8 +226,10 @@ INSERT INTO produto (nome,preco_custo,preco_venda,estoque) values ('BACONZITOS',
 
 
 /*01- Escreva quatro procedures de sintaxe - não precisa ter funcionalidade, basta não dar erro de
-sintaxe. Use variável global para testar.
-- Faça uma declarando variáveis e com select into;*/
+sintaxe. Use variável global para testar.*/
+
+
+/*- Faça uma declarando variáveis e com select into;*/
 
 
 SET @teste1 = '444.444.444-44';
@@ -245,32 +247,49 @@ CALL variaveis (3);
 SELECT @teste1; 
 
 
-/*
-- Faça a segunda com uma estrutura de decisão;*/
 
-
-/*
-
-- Faça a terceira que gere erro, impedindo a ação;
-- Faça a quarta com if e else.
-*/
+/*- Faça a segunda com uma estrutura de decisão;*/
 
 SET @teste2 = "Erro";
+
 drop PROCEDURE estrutura_decisao;
 DELIMITER // 
 CREATE PROCEDURE estrutura_decisao(cpf_cnpj VARCHAR(45))
 	BEGIN
+    	IF LENGTH(cpf_cnpj) > 14 THEN
+		SET @teste2 = "Caracteres excedidos";
+		END IF;
+	END;
+//
+DELIMITER ;
+
+CALL estrutura_decisao('222.222.222');
+SELECT @teste2;
+
+/*
+
+/*- Faça a terceira que gere erro, impedindo a ação;*/
+
+
+
+/*- Faça a quarta com if e else.*/
+
+SET @teste4 = "Erro";
+drop PROCEDURE if_else;
+DELIMITER // 
+CREATE PROCEDURE estrutura_decisao(cpf_cnpj VARCHAR(45))
+	BEGIN
     	IF LENGTH(cpf_cnpj) > 14 OR LENGTH(cpf_cnpj) < 14 THEN
-		SET @teste2 = "Os dados são invalidos";
+		SET @teste4 = "Os dados são invalidos";
 	ELSE
-		SET @teste2 = "Os dados são válidos";
+		SET @teste4 = "Os dados são válidos";
 		END IF;
 	END;
 //
 DELIMITER ;
 
 CALL estrutura_decisao('222.222.222-222');
-SELECT @teste2;
+SELECT @teste4;
 
 /*
 02 - Escreva uma procedure que registre a baixa de um produto e já atualize devidamente o estoque do
