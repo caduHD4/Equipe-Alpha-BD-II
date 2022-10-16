@@ -270,6 +270,17 @@ SELECT @teste2;
 
 /*- Faça a terceira que gere erro, impedindo a ação;*/
 
+DELIMITER //
+CREATE PROCEDURE verifica_cpf (cpf_cnpj VARCHAR(18))
+	BEGIN
+      	IF LENGTH(cpf_cnpj) > 14 OR LENGTH(cpf_cnpj) < 14 THEN
+                	SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "NÚMERO DE CARACTERES INCORRETO";
+      	END IF;
+	END;
+//
+DELIMITER ;
+
+CALL verifica_cpf ('555.555.555-555');
 
 
 /*- Faça a quarta com if e else.*/
