@@ -252,6 +252,7 @@ SELECT @teste;
 - Faça a quarta com if e else.
 02 - Escreva uma procedure que registre a baixa de um produto e já atualize devidamente o estoque do
 produto. Antes das ações, verifique se o produto é ativo.
+ 
 03 - Escreva uma procedure que altere o preço de um produto vendido (venda já realizada - necessário
 verificar a existência da venda). Não permita altearções abusivas - preço de venda abaixo do preço de
 custo. É possível implementar esta funcionalidade sem a procedure? Se sim, indique como, bem como
