@@ -248,36 +248,31 @@ SELECT @teste1;
 /*
 - Faça a segunda com uma estrutura de decisão;*/
 
-SET @teste2 = "Erro";
-
-DELIMITER // 
-CREATE PROCEDURE estrutura_decisao 
-	BEGIN
-    	IF LENGTH(NEW.CPF_CNPJ) <= 14 THEN
-		SET @teste2 = "Os dados são válidos";
-	ELSE
-		SET @teste2 = "Dados inválidos";
-		END IF;
-	END;
-//
-DELIMITER ;
-
-CALL 
-SELECT @teste2;
-
-
-
-
-
-
-
-
-
 
 /*
 
 - Faça a terceira que gere erro, impedindo a ação;
 - Faça a quarta com if e else.
+*/
+
+SET @teste2 = "Erro";
+
+DELIMITER // 
+CREATE PROCEDURE estrutura_decisao(cpf_cnpj VARCHAR(45))
+	BEGIN
+    	IF LENGTH(cpf_cnpj) > 14 OR LENGTH(cpf_cnpj) < 14 THEN
+		SET @teste2 = "Os dados são válidos";
+	ELSE
+		SET @teste2 = "Dados Validados";
+		END IF;
+	END;
+//
+DELIMITER ;
+
+CALL estrutura_decisao('222.222.222-222');
+SELECT @teste2;
+
+/*
 02 - Escreva uma procedure que registre a baixa de um produto e já atualize devidamente o estoque do
 produto. Antes das ações, verifique se o produto é ativo.
  
