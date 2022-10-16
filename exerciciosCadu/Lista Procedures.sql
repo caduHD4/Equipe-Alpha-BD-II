@@ -229,21 +229,20 @@ INSERT INTO produto (nome,preco_custo,preco_venda,estoque) values ('BACONZITOS',
 sintaxe. Use variável global para testar.
 - Faça uma declarando variáveis e com select into;*/
 
-SET @teste = 2;
 
-DELIMITER //
-CREATE PROCEDURE variaveis (id_produto INT)
-    BEGIN
-        SELECT estoque INTO @teste FROM produto WHERE produto.id = id_produto;
-    END;
+SET @teste1 = 'CARLOS';
+
+DELIMITER // 
+CREATE PROCEDURE variaveis (id_cliente INT)
+		BEGIN
+			SELECT nome_completo INTO @teste1 FROM cliente WHERE cliente.id = id_cliente;
+		END;
 //
 DELIMITER ;
 
---Teste.
-CALL variaveis (1);
 
-SELECT @teste;
-
+CALL variaveis (3);
+SELECT @teste1; 
 
 
 /*
