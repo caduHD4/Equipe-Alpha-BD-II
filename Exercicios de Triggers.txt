@@ -239,3 +239,29 @@ END;
 DELIMITER ;
 
 SELECT estoque,situaçao FROM produto;
+
+DELIMITER //
+CREATE TRIGGER valor_recebimento_iten_caixa
+AFTER INSERT ON recebimento
+FOR EACH ROW
+BEGIN
+	
+	UPDATE iten_caixa SET valor = valor + NEW.sem_desconto WHERE id = NEW.iten_caixa_id;
+	
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER saldo_final_caixa
+AFTER INSERT ON iten_caixa
+FOR EACH ROW
+BEGIN
+
+	UPDATE caixa SET saldo_final = (saldo_final + NEW.valor) - saldo_inicial  WHERE id = NEW.caixa_id;
+	
+END;
+//
+DELIMITER ;
+
+SELECT * FROM caixa;
