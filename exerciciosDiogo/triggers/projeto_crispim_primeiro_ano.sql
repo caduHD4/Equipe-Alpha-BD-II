@@ -357,4 +357,6 @@ UPDATE CLIENTE SET ATIVO = 'N' WHERE ID = 2;
 
 SELECT * FROM CONTROLE_CLIENTES_INATIVOS;
 
+select * from produto where id = 4;
+
 
