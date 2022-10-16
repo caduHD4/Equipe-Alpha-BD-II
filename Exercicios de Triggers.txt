@@ -242,26 +242,30 @@ SELECT estoque,situaçao FROM produto;
 
 DELIMITER //
 CREATE TRIGGER valor_recebimento_iten_caixa
-AFTER INSERT ON recebimento
+BEFORE INSERT ON recebimento
 FOR EACH ROW
 BEGIN
-	
-	UPDATE iten_caixa SET valor = valor + NEW.sem_desconto WHERE id = NEW.iten_caixa_id;
-	
+	DECLARE tipo VARCHAR (45);
+    
+    SELECT especie INTO tipo FROM recebimento WHERE id = NEW.recebimento_id;
+    
+	IF tipo = "avista" THEN
+		UPDATE iten_caixa SET valor_novo = valor_novo + valor + NEW.desconto WHERE id = NEW.iten_caixa_id;
+    ELSE
+		UPDATE iten_caixa SET valor_novo = valor_novo + valor + NEW.sem_desconto WHERE id = NEW.iten_caixa_id;
+	END IF;
 END;
 //
 DELIMITER ;
 
 DELIMITER //
 CREATE TRIGGER saldo_final_caixa
-AFTER INSERT ON iten_caixa
+AFTER UPDATE ON iten_caixa
 FOR EACH ROW
 BEGIN
-
-	UPDATE caixa SET saldo_final = (saldo_final + NEW.valor) - saldo_inicial  WHERE id = NEW.caixa_id;
 	
+	INSERT INTO iten_caixa (valor, valor_novo, especie, caixa_id) VALUES (OLD.valor, NEW.valor_novo, NEW.especie, NEW.caixa_id);
+	UPDATE caixa SET saldo_final= saldo_final + saldo + NEW.valor_novo WHERE id = NEW.caixa_id;
 END;
 //
 DELIMITER ;
-
-SELECT * FROM caixa;
