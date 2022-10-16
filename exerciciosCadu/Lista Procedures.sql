@@ -230,12 +230,12 @@ sintaxe. Use variável global para testar.
 - Faça uma declarando variáveis e com select into;*/
 
 
-SET @teste1 = 'CARLOS';
+SET @teste1 = '444.444.444-44';
 
 DELIMITER // 
 CREATE PROCEDURE variaveis (id_cliente INT)
 		BEGIN
-			SELECT nome_completo INTO @teste1 FROM cliente WHERE cliente.id = id_cliente;
+			SELECT CPF_CNPJ INTO @teste1 FROM cliente WHERE cliente.id = id_cliente;
 		END;
 //
 DELIMITER ;
@@ -246,7 +246,36 @@ SELECT @teste1;
 
 
 /*
-- Faça a segunda com uma estrutura de decisão;
+- Faça a segunda com uma estrutura de decisão;*/
+
+SET @teste2 = "Erro";
+
+DELIMITER // 
+CREATE PROCEDURE estrutura_decisao 
+	BEGIN
+    	IF LENGTH(NEW.CPF_CNPJ) <= 14 THEN
+		SET @teste2 = "Os dados são válidos";
+	ELSE
+		SET @teste2 = "Dados inválidos";
+		END IF;
+	END;
+//
+DELIMITER ;
+
+CALL 
+SELECT @teste2;
+
+
+
+
+
+
+
+
+
+
+/*
+
 - Faça a terceira que gere erro, impedindo a ação;
 - Faça a quarta com if e else.
 02 - Escreva uma procedure que registre a baixa de um produto e já atualize devidamente o estoque do
