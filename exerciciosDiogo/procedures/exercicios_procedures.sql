@@ -13503,5 +13503,36 @@ DELIMITER ;
 
 -- TESTE DA PROCEDURE INSERIR_DADOS_CLIENTE
 
-CALL INSERIR_DADOS_CLIENTE('Vitória Azevedo', '817.124.899-33', 'Rua Sete ', 711, 'Zona 08 - Bairro Aeroporto', '33080-3282', 9669);				
-CALL INSERIR_DADOS_CLIENTE('Julian Cavalcanti', '830.130.158-96', 'Rua Seis ', 37, 'Zona 07', '13181-721', 3087);				
+-- CALL INSERIR_DADOS_CLIENTE('Vitória Azevedo', '817.124.899-33', 'Rua Sete ', 711, 'Zona 08 - Bairro Aeroporto', '33080-3282', 9669);				
+-- CALL INSERIR_DADOS_CLIENTE('Julian Cavalcanti', '830.130.158-96', 'Rua Seis ', 37, 'Zona 07', '13181-721', 3087);				
+
+/* 02 - Escreva uma procedure que registre a baixa de um produto e já atualize devidamente o 
+estoque do produto. Antes das ações, verifique se o produto é ativo. */
+
+DELIMITER //
+CREATE PROCEDURE INSERIR_ITEM_VENDA(ID_VENDA INT, ID_PRODUTO INT, QUANTIDADE_PRODUTO INT, PRECO_UNIDADE_PRODUTO DECIMAL(12,2), DESCONTO_IV DECIMAL(12,2))
+
+BEGIN
+    DECLARE STATUS_PRODUTO CHAR(1);
+    DECLARE QUANTIDADE_ANTIGA INT;
+    SELECT STATUS INTO STATUS_PRODUTO FROM PRODUTO WHERE ID = ID_PRODUTO;
+    IF STATUS_PRODUTO = 'n' OR STATUS_PRODUTO = 'N' THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'PRODUTO INATIVO';
+    ELSE
+        INSERT INTO PRODUTO (VENDA_ID, PRODUTO_ID, QUANTIDADE, PRECO_UNIDADE, DESCONTO) VALUES (ID_VENDA, ID_PRODUTO, QUANTIDADE_PRODUTO, PRECO_UNIDADE_PRODUTO, DESCONTO_IV);
+        SELECT ESTOQUE INTO QUANTIDADE_ANTIGA FROM PRODUTO WHERE ID = ID_PRODUTO;
+        UPDATE PRODUTO SET ESTOQUE = QUANTIDADE_ANTIGA - QUANTIDADE_PRODUTO WHERE ID = ID_PRODUTO;
+	END IF;
+END;
+// DELIMITER ;
+
+
+-- 03 - Escreva uma procedure que altere o preço de um produto vendido (venda já realizada - necessário verificar a existência da venda). Não permita altearções abusivas - preço de venda abaixo do preço de custo. É possível implementar esta funcionalidade sem a procedure? Se sim, indique como, bem como as vantagens e desvantagens.
+-- 04 - Escreva uma procedure que registre vendas de produtos e já defina o total da venda. É possível implementar a mesma funcionalidade por meio da trigger? Qual seria a diferença?
+-- 05- Para o controle de salário de funcionários de uma empresa e os respectivos adiantamentos
+-- (vales):
+--quais tabelas são necessárias?
+-- RESPOSTA: É NECESSARIA A TABELA ADIANTAMENTO QUE TENHA AS COLUNAS, ID, FUNCIONARIO_ID, VALOR, DATA_ADIANTAMENTO.
+-- 06- De acordo com o seu projeto de banco de dados, pense em pelo menos 3 procedures úteis. Discuta com os seus colegas em relação a relevância e implemente-as.
+-- 07- Explique as diferenças entre trigger, função e procedure. Indique as vantagens e desvantagens em utilizar a procedure.
+
