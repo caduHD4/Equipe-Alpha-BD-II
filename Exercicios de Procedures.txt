@@ -116,4 +116,27 @@ DELIMITER ;
 
 CALL produto_verificar(1,'Disjuntor Monopolar  25A');
 
+DELIMITER //
+CREATE PROCEDURE produto_Update(p_id INT, p_nome VARCHAR(200), p_preço DECIMAL (9,2))
+BEGIN 
+	
+    DECLARE produto_nome  VARCHAR(200);
+	DECLARE produto_preço  DECIMAL (9,2);
+
+    
+    SELECT nome INTO produto_nome FROM produto WHERE nome = p_nome;
+	SELECT preço INTO produto_preço FROM produto WHERE preço = p_preço;
+	
+    IF (((produto_id > 0) && (produto_id != '') ) && (produto_nome != '') && (produto_preço != '')) THEN
+		SELECT COUNT(*) INTO produto_id FROM produto WHERE id = p_id;
+		UPDATE produto SET nome = p_nome, preço = p_preço  WHERE produto.id = p_id;
+	ELSE
+		SELECT 'Os novos Nomes e Preços devem ser informados!' AS Msg;
+	END IF; 
+END;
+//
+DELIMITER ;
+
+CALL produto_Update(2, 'Eletroudo de 1/2 polegada"', '150.00');
+
 07- Explique as diferenças entre trigger, função e procedure. Indique as vantagens e desvantagens em utilizar a procedure.
