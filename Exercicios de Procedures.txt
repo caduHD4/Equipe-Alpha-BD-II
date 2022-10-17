@@ -80,4 +80,40 @@ SELECT @teste4;
 
 06- De acordo com o seu projeto de banco de dados, pense em pelo menos 3 procedures úteis. Discuta com os seus colegas em relação a relevância e implemente-as.
 
+DELIMITER //
+CREATE PROCEDURE produto_verificar(pid INT, pnome VARCHAR (200))
+BEGIN
+    DECLARE nome_prod VARCHAR(200);
+    DECLARE descriçao_prod VARCHAR(200);
+	DECLARE preço_prod INT;
+    DECLARE estoque_prod INT;
+    DECLARE vencimento_prod DATE;
+    DECLARE qtde INT;
+
+IF pid >= 1 AND pid <= 100 THEN
+      IF LENGTH(pnome) >= 1 AND LENGTH(pnome) <= 200 THEN
+        SELECT COUNT(*) INTO qtde FROM produto WHERE produto.id = pid;
+IF qtde = 0 THEN
+   SELECT COUNT(*) INTO qtde FROM produto WHERE UPPER(nome) = UPPER(pnome);
+             IF qtde = 0 THEN
+	          INSERT INTO produto(nome, descriçao, preço, estoque, vencimento)
+                 VALUES (nome_prod , descriçao_prod, preço_prod, estoque_prod, vencimento_prod);
+	      ELSE
+				SELECT'O valor do campo nome já existe.';
+	      END IF; 
+            ELSE
+                SELECT 'O valor do campo id já existe';
+          END IF;
+       ELSE
+           SELECT 'O valor do campo nome está fora da faixa de valores aceitáveis';
+	   END IF;
+   ELSE
+     SELECT 'O valor do campo id está fora da faixa de valores aceitáveis';
+END IF;
+
+END //
+DELIMITER ;
+
+CALL produto_verificar(1,'Disjuntor Monopolar  25A');
+
 07- Explique as diferenças entre trigger, função e procedure. Indique as vantagens e desvantagens em utilizar a procedure.
