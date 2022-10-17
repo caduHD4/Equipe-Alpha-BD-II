@@ -1,0 +1,168 @@
+ 
+01- Escreva quarto procedures de sintaxe - não precisa ter funcionalidade, basta não dar erro de sintaxe. Use variável global para testar.
+
+- Faça uma declarando variáveis e com select into;
+
+SET @teste1 = '444.444.444-44';
+
+DELIMITER // 
+CREATE PROCEDURE variaveis (id_cliente INT)
+		BEGIN
+			SELECT CPF_CNPJ INTO @teste1 FROM cliente WHERE cliente.id = id_cliente;
+		END;
+//
+DELIMITER ;
+
+
+CALL variaveis (3);
+SELECT @teste1; 
+
+- Faça a segunda com uma estrutura de decisão; 
+
+SET @teste2 = "Erro";
+
+drop PROCEDURE estrutura_decisao;
+DELIMITER // 
+CREATE PROCEDURE estrutura_decisao(cpf_cnpj VARCHAR(45))
+	BEGIN
+    	IF LENGTH(cpf_cnpj) > 14 THEN
+		SET @teste2 = "Caracteres excedidos";
+		END IF;
+	END;
+//
+DELIMITER ;
+
+CALL estrutura_decisao('222.222.222');
+SELECT @teste2;
+
+- Faça a terceira que gere erro, impedindo a ação;
+
+DELIMITER //
+CREATE PROCEDURE verifica_cpf (cpf_cnpj VARCHAR(18))
+	BEGIN
+      	IF LENGTH(cpf_cnpj) > 14 OR LENGTH(cpf_cnpj) < 14 THEN
+                	SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "NÚMERO DE CARACTERES INCORRETO";
+      	END IF;
+	END;
+//
+DELIMITER ;
+
+CALL verifica_cpf ('555.555.555-555');
+
+- Faça a quarta com if e else. 
+SET @teste4 = "Erro";
+drop PROCEDURE if_else;
+DELIMITER // 
+CREATE PROCEDURE estrutura_decisao(cpf_cnpj VARCHAR(45))
+	BEGIN
+    	IF LENGTH(cpf_cnpj) > 14 OR LENGTH(cpf_cnpj) < 14 THEN
+		SET @teste4 = "Os dados são invalidos";
+	ELSE
+		SET @teste4 = "Os dados são válidos";
+		END IF;
+	END;
+//
+DELIMITER ;
+
+CALL estrutura_decisao('222.222.222-222');
+SELECT @teste4;
+
+
+02 - Escreva uma procedure que registre a baixa de um produto e já atualize devidamente o estoque do produto. Antes das ações, verifique se o produto é ativo.
+
+03 - Escreva uma procedure que altere o preço de um produto vendido (venda já realizada - necessário verificar a existência da venda). Não permita altearções abusivas - preço de venda abaixo do preço de custo. É possível implementar esta funcionalidade sem a procedure? Se sim, indique como, bem como as vantagens e desvantagens.
+
+04 - Escreva uma procedure que registre vendas de produtos e já defina o total da venda. É possível implementar a mesma funcionalidade por meio da trigger? Qual seria a diferença?
+
+05- Para o controle de salário de funcionários de uma empresa e os respectivos adiantamentos (vales):
+ 
+- quais tabelas são necessárias?
+
+06- De acordo com o seu projeto de banco de dados, pense em pelo menos 3 procedures úteis. Discuta com os seus colegas em relação a relevância e implemente-as.
+
+DELIMITER //
+CREATE PROCEDURE produto_verificar(pid INT, pnome VARCHAR (200))
+BEGIN
+    DECLARE nome_prod VARCHAR(200);
+    DECLARE descriçao_prod VARCHAR(200);
+	DECLARE preço_prod INT;
+    DECLARE estoque_prod INT;
+    DECLARE vencimento_prod DATE;
+    DECLARE qtde INT;
+
+IF pid >= 1 AND pid <= 100 THEN
+      IF LENGTH(pnome) >= 1 AND LENGTH(pnome) <= 200 THEN
+        SELECT COUNT(*) INTO qtde FROM produto WHERE produto.id = pid;
+IF qtde = 0 THEN
+   SELECT COUNT(*) INTO qtde FROM produto WHERE UPPER(nome) = UPPER(pnome);
+             IF qtde = 0 THEN
+	          INSERT INTO produto(nome, descriçao, preço, estoque, vencimento)
+                 VALUES (nome_prod , descriçao_prod, preço_prod, estoque_prod, vencimento_prod);
+	      ELSE
+				SELECT'O valor do campo nome já existe.';
+	      END IF; 
+            ELSE
+                SELECT 'O valor do campo id já existe';
+          END IF;
+       ELSE
+           SELECT 'O valor do campo nome está fora da faixa de valores aceitáveis';
+	   END IF;
+   ELSE
+     SELECT 'O valor do campo id está fora da faixa de valores aceitáveis';
+END IF;
+
+END //
+DELIMITER ;
+
+CALL produto_verificar(1,'Disjuntor Monopolar  25A');
+
+DELIMITER //
+CREATE PROCEDURE produto_Update(p_id INT, p_nome VARCHAR(200), p_preço DECIMAL (9,2))
+BEGIN 
+	
+    DECLARE produto_nome  VARCHAR(200);
+	DECLARE produto_preço  DECIMAL (9,2);
+
+    
+    SELECT nome INTO produto_nome FROM produto WHERE nome = p_nome;
+	SELECT preço INTO produto_preço FROM produto WHERE preço = p_preço;
+	
+    IF (((produto_id > 0) && (produto_id != '') ) && (produto_nome != '') && (produto_preço != '')) THEN
+		SELECT COUNT(*) INTO produto_id FROM produto WHERE id = p_id;
+		UPDATE produto SET nome = p_nome, preço = p_preço  WHERE produto.id = p_id;
+	ELSE
+		SELECT 'Os novos Nomes e Preços devem ser informados!' AS Msg;
+	END IF; 
+END;
+//
+DELIMITER ;
+
+CALL produto_Update(2, 'Eletroudo de 1/2 polegada"', '150.00');
+
+DELIMITER //
+CREATE PROCEDURE imperdir_venda (id_venda INT,id_produto INT, quantidade INT, preco_unidade DECIMAL(9,2) )
+BEGIN
+    DECLARE est_quantidade INT; 
+    DECLARE iten_quantidade INT; 
+    
+    SELECT produto.estoque INTO est_quantidade FROM produto WHERE produto.id = id_produto;
+    SELECT quantidade INTO iten_quantidade FROM iten_venda;
+    
+    IF est_quantidade = 0 && iten_quantidade > est_quantidade  THEN
+		BEGIN
+			SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Produto Esgotado ou quantidade de venda superior ao disponivel';
+		END;
+	END IF;
+   
+   INSERT INTO item_venda (venda_id, produto_id, quantidade, preco) VALUES ( id_venda, id_produto,  quantidade, preco);
+    UPDATE produto SET estoque = estoque - quantidade WHERE produto.id = id_produto;
+END;
+//
+DELIMITER ;
+
+SELECT * FROM produto;
+
+SET @Preco = (SELECT preço FROM produto WHERE id = produto_id);
+CALL imperdir_venda(1,1,2,@Preco);
+
+07- Explique as diferenças entre trigger, função e procedure. Indique as vantagens e desvantagens em utilizar a procedure.

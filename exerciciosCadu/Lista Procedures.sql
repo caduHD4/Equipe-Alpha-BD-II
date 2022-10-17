@@ -226,32 +226,95 @@ INSERT INTO produto (nome,preco_custo,preco_venda,estoque) values ('BACONZITOS',
 
 
 /*01- Escreva quatro procedures de sintaxe - não precisa ter funcionalidade, basta não dar erro de
-sintaxe. Use variável global para testar.
-- Faça uma declarando variáveis e com select into;*/
+sintaxe. Use variável global para testar.*/
 
-SET @teste = 2;
 
-DELIMITER //
-CREATE PROCEDURE variaveis (id_produto INT)
-    BEGIN
-        SELECT estoque INTO @teste FROM produto WHERE produto.id = id_produto;
-    END;
+/*- Faça uma declarando variáveis e com select into;*/
+
+
+SET @teste1 = '444.444.444-44';
+
+DELIMITER // 
+CREATE PROCEDURE variaveis (id_cliente INT)
+		BEGIN
+			SELECT CPF_CNPJ INTO @teste1 FROM cliente WHERE cliente.id = id_cliente;
+		END;
 //
 DELIMITER ;
 
---Teste.
-CALL variaveis (1);
 
-SELECT @teste;
-
+CALL variaveis (3);
+SELECT @teste1; 
 
 
-/*
-- Faça a segunda com uma estrutura de decisão;
-- Faça a terceira que gere erro, impedindo a ação;
-- Faça a quarta com if e else.
-02 - Escreva uma procedure que registre a baixa de um produto e já atualize devidamente o estoque do
-produto. Antes das ações, verifique se o produto é ativo.
+
+/*- Faça a segunda com uma estrutura de decisão;*/
+
+
+SET @teste2 = "Erro";
+
+drop PROCEDURE estrutura_decisao;
+DELIMITER // 
+CREATE PROCEDURE estrutura_decisao(cpf_cnpj VARCHAR(45))
+	BEGIN
+    	IF LENGTH(cpf_cnpj) > 14 THEN
+		SET @teste2 = "Caracteres excedidos";
+		END IF;
+	END;
+//
+DELIMITER ;
+
+CALL estrutura_decisao('222.222.222');
+SELECT @teste2;
+
+
+/*- Faça a terceira que gere erro, impedindo a ação;*/
+
+
+DELIMITER //
+CREATE PROCEDURE verifica_cpf (cpf_cnpj VARCHAR(18))
+	BEGIN
+      	IF LENGTH(cpf_cnpj) > 14 OR LENGTH(cpf_cnpj) < 14 THEN
+                	SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "NÚMERO DE CARACTERES INCORRETO";
+      	END IF;
+	END;
+//
+DELIMITER ;
+
+CALL verifica_cpf ('555.555.555-555');
+
+
+/*- Faça a quarta com if e else.*/
+
+
+SET @teste4 = "Erro";
+drop PROCEDURE if_else;
+DELIMITER // 
+CREATE PROCEDURE estrutura_decisao(cpf_cnpj VARCHAR(45))
+	BEGIN
+    	IF LENGTH(cpf_cnpj) > 14 OR LENGTH(cpf_cnpj) < 14 THEN
+		SET @teste4 = "Os dados são invalidos";
+	ELSE
+		SET @teste4 = "Os dados são válidos";
+		END IF;
+	END;
+//
+DELIMITER ;
+
+CALL estrutura_decisao('222.222.222-222');
+SELECT @teste4;
+
+
+/*02 - Escreva uma procedure que registre a baixa de um produto e já atualize devidamente o estoque do
+produto. Antes das ações, verifique se o produto é ativo.*/
+
+
+
+
+
+
+
+ /*
 03 - Escreva uma procedure que altere o preço de um produto vendido (venda já realizada - necessário
 verificar a existência da venda). Não permita altearções abusivas - preço de venda abaixo do preço de
 custo. É possível implementar esta funcionalidade sem a procedure? Se sim, indique como, bem como
