@@ -250,6 +250,7 @@ SELECT @teste1;
 
 /*- Faça a segunda com uma estrutura de decisão;*/
 
+
 SET @teste2 = "Erro";
 
 drop PROCEDURE estrutura_decisao;
@@ -266,9 +267,9 @@ DELIMITER ;
 CALL estrutura_decisao('222.222.222');
 SELECT @teste2;
 
-/*
 
 /*- Faça a terceira que gere erro, impedindo a ação;*/
+
 
 DELIMITER //
 CREATE PROCEDURE verifica_cpf (cpf_cnpj VARCHAR(18))
@@ -284,6 +285,7 @@ CALL verifica_cpf ('555.555.555-555');
 
 
 /*- Faça a quarta com if e else.*/
+
 
 SET @teste4 = "Erro";
 drop PROCEDURE if_else;
@@ -302,10 +304,17 @@ DELIMITER ;
 CALL estrutura_decisao('222.222.222-222');
 SELECT @teste4;
 
-/*
-02 - Escreva uma procedure que registre a baixa de um produto e já atualize devidamente o estoque do
-produto. Antes das ações, verifique se o produto é ativo.
- 
+
+/*02 - Escreva uma procedure que registre a baixa de um produto e já atualize devidamente o estoque do
+produto. Antes das ações, verifique se o produto é ativo.*/
+
+
+
+
+
+
+
+ /*
 03 - Escreva uma procedure que altere o preço de um produto vendido (venda já realizada - necessário
 verificar a existência da venda). Não permita altearções abusivas - preço de venda abaixo do preço de
 custo. É possível implementar esta funcionalidade sem a procedure? Se sim, indique como, bem como
