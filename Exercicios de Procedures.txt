@@ -139,4 +139,30 @@ DELIMITER ;
 
 CALL produto_Update(2, 'Eletroudo de 1/2 polegada"', '150.00');
 
+DELIMITER //
+CREATE PROCEDURE imperdir_venda (id_venda INT,id_produto INT, quantidade INT, preco_unidade DECIMAL(9,2) )
+BEGIN
+    DECLARE est_quantidade INT; 
+    DECLARE iten_quantidade INT; 
+    
+    SELECT produto.estoque INTO est_quantidade FROM produto WHERE produto.id = id_produto;
+    SELECT quantidade INTO iten_quantidade FROM iten_venda;
+    
+    IF est_quantidade = 0 && iten_quantidade > est_quantidade  THEN
+		BEGIN
+			SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Produto Esgotado ou quantidade de venda superior ao disponivel';
+		END;
+	END IF;
+   
+   INSERT INTO item_venda (venda_id, produto_id, quantidade, preco) VALUES ( id_venda, id_produto,  quantidade, preco);
+    UPDATE produto SET estoque = estoque - quantidade WHERE produto.id = id_produto;
+END;
+//
+DELIMITER ;
+
+SELECT * FROM produto;
+
+SET @Preco = (SELECT preço FROM produto WHERE id = produto_id);
+CALL imperdir_venda(1,1,2,@Preco);
+
 07- Explique as diferenças entre trigger, função e procedure. Indique as vantagens e desvantagens em utilizar a procedure.
