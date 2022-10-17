@@ -1,24 +1,83 @@
  
-01- Escreva quarto procedures de sintaxe - não precisa ter funcionalidade, basta não dar erro de sintaxe. Use variável global para testar.
+01- Escreva quarto procedures de sintaxe - nÃ£o precisa ter funcionalidade, basta nÃ£o dar erro de sintaxe. Use variÃ¡vel global para testar.
 
-- Faça uma declarando variáveis e com select into; 
+- FaÃ§a uma declarando variÃ¡veis e com select into;
 
-- Faça a segunda com uma estrutura de decisão; 
+SET @teste1 = '444.444.444-44';
 
-- Faça a terceira que gere erro, impedindo a ação;
+DELIMITER // 
+CREATE PROCEDURE variaveis (id_cliente INT)
+		BEGIN
+			SELECT CPF_CNPJ INTO @teste1 FROM cliente WHERE cliente.id = id_cliente;
+		END;
+//
+DELIMITER ;
 
-- Faça a quarta com if e else. 
 
-02 - Escreva uma procedure que registre a baixa de um produto e já atualize devidamente o estoque do produto. Antes das ações, verifique se o produto é ativo.
+CALL variaveis (3);
+SELECT @teste1; 
 
-03 - Escreva uma procedure que altere o preço de um produto vendido (venda já realizada - necessário verificar a existência da venda). Não permita altearções abusivas - preço de venda abaixo do preço de custo. É possível implementar esta funcionalidade sem a procedure? Se sim, indique como, bem como as vantagens e desvantagens.
+- FaÃ§a a segunda com uma estrutura de decisÃ£o; 
 
-04 - Escreva uma procedure que registre vendas de produtos e já defina o total da venda. É possível implementar a mesma funcionalidade por meio da trigger? Qual seria a diferença?
+SET @teste2 = "Erro";
 
-05- Para o controle de salário de funcionários de uma empresa e os respectivos adiantamentos (vales):
+drop PROCEDURE estrutura_decisao;
+DELIMITER // 
+CREATE PROCEDURE estrutura_decisao(cpf_cnpj VARCHAR(45))
+	BEGIN
+    	IF LENGTH(cpf_cnpj) > 14 THEN
+		SET @teste2 = "Caracteres excedidos";
+		END IF;
+	END;
+//
+DELIMITER ;
+
+CALL estrutura_decisao('222.222.222');
+SELECT @teste2;
+
+- FaÃ§a a terceira que gere erro, impedindo a aÃ§Ã£o;
+
+DELIMITER //
+CREATE PROCEDURE verifica_cpf (cpf_cnpj VARCHAR(18))
+	BEGIN
+      	IF LENGTH(cpf_cnpj) > 14 OR LENGTH(cpf_cnpj) < 14 THEN
+                	SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "NÃšMERO DE CARACTERES INCORRETO";
+      	END IF;
+	END;
+//
+DELIMITER ;
+
+CALL verifica_cpf ('555.555.555-555');
+
+- FaÃ§a a quarta com if e else. 
+SET @teste4 = "Erro";
+drop PROCEDURE if_else;
+DELIMITER // 
+CREATE PROCEDURE estrutura_decisao(cpf_cnpj VARCHAR(45))
+	BEGIN
+    	IF LENGTH(cpf_cnpj) > 14 OR LENGTH(cpf_cnpj) < 14 THEN
+		SET @teste4 = "Os dados sÃ£o invalidos";
+	ELSE
+		SET @teste4 = "Os dados sÃ£o vÃ¡lidos";
+		END IF;
+	END;
+//
+DELIMITER ;
+
+CALL estrutura_decisao('222.222.222-222');
+SELECT @teste4;
+
+
+02 - Escreva uma procedure que registre a baixa de um produto e jÃ¡ atualize devidamente o estoque do produto. Antes das aÃ§Ãµes, verifique se o produto Ã© ativo.
+
+03 - Escreva uma procedure que altere o preÃ§o de um produto vendido (venda jÃ¡ realizada - necessÃ¡rio verificar a existÃªncia da venda). NÃ£o permita altearÃ§Ãµes abusivas - preÃ§o de venda abaixo do preÃ§o de custo. Ã‰ possÃ­vel implementar esta funcionalidade sem a procedure? Se sim, indique como, bem como as vantagens e desvantagens.
+
+04 - Escreva uma procedure que registre vendas de produtos e jÃ¡ defina o total da venda. Ã‰ possÃ­vel implementar a mesma funcionalidade por meio da trigger? Qual seria a diferenÃ§a?
+
+05- Para o controle de salÃ¡rio de funcionÃ¡rios de uma empresa e os respectivos adiantamentos (vales):
  
-- quais tabelas são necessárias?
+- quais tabelas sÃ£o necessÃ¡rias?
 
-06- De acordo com o seu projeto de banco de dados, pense em pelo menos 3 procedures úteis. Discuta com os seus colegas em relação a relevância e implemente-as.
+06- De acordo com o seu projeto de banco de dados, pense em pelo menos 3 procedures Ãºteis. Discuta com os seus colegas em relaÃ§Ã£o a relevÃ¢ncia e implemente-as.
 
-07- Explique as diferenças entre trigger, função e procedure. Indique as vantagens e desvantagens em utilizar a procedure.
+07- Explique as diferenÃ§as entre trigger, funÃ§Ã£o e procedure. Indique as vantagens e desvantagens em utilizar a procedure.
