@@ -96,6 +96,8 @@ END;
  
 - quais tabelas são necessárias?
 
+-- RESPOSTA: É necessaria a tabela adiatamento e as colunas funcionario_id, valor, data_adiantamento.
+
 06- De acordo com o seu projeto de banco de dados, pense em pelo menos 3 procedures úteis. Discuta com os seus colegas em relação a relevância e implemente-as.
 
 DELIMITER //
