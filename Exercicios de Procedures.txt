@@ -70,6 +70,24 @@ SELECT @teste4;
 
 02 - Escreva uma procedure que registre a baixa de um produto e já atualize devidamente o estoque do produto. Antes das ações, verifique se o produto é ativo.
 
+DELIMITER //
+CREATE PROCEDURE INSERIR_ITEM_VENDA(ID_VENDA INT, ID_PRODUTO INT, QUANTIDADE_PRODUTO INT, PRECO_UNIDADE_PRODUTO DECIMAL(12,2), DESCONTO_IV DECIMAL(12,2))
+
+BEGIN
+    DECLARE STATUS_PRODUTO CHAR(1);
+    DECLARE QUANTIDADE_ANTIGA INT;
+    SELECT STATUS INTO STATUS_PRODUTO FROM PRODUTO WHERE ID = ID_PRODUTO;
+    IF STATUS_PRODUTO = 'n' OR STATUS_PRODUTO = 'N' THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'PRODUTO INATIVO';
+    ELSE
+        INSERT INTO PRODUTO (VENDA_ID, PRODUTO_ID, QUANTIDADE, PRECO_UNIDADE, DESCONTO) VALUES (ID_VENDA, ID_PRODUTO, QUANTIDADE_PRODUTO, PRECO_UNIDADE_PRODUTO, DESCONTO_IV);
+        SELECT ESTOQUE INTO QUANTIDADE_ANTIGA FROM PRODUTO WHERE ID = ID_PRODUTO;
+        UPDATE PRODUTO SET ESTOQUE = QUANTIDADE_ANTIGA - QUANTIDADE_PRODUTO WHERE ID = ID_PRODUTO;
+	END IF;
+END;
+// DELIMITER ;
+
+
 03 - Escreva uma procedure que altere o preço de um produto vendido (venda já realizada - necessário verificar a existência da venda). Não permita altearções abusivas - preço de venda abaixo do preço de custo. É possível implementar esta funcionalidade sem a procedure? Se sim, indique como, bem como as vantagens e desvantagens.
 
 04 - Escreva uma procedure que registre vendas de produtos e já defina o total da venda. É possível implementar a mesma funcionalidade por meio da trigger? Qual seria a diferença?
