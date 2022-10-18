@@ -308,9 +308,23 @@ SELECT @teste4;
 /*02 - Escreva uma procedure que registre a baixa de um produto e já atualize devidamente o estoque do
 produto. Antes das ações, verifique se o produto é ativo.*/
 
+DELIMITER //
+CREATE PROCEDURE inserir_item_venda(id_venda, id_produto, quantidade_produto, preco_unidade_produto, desconto_iv)
 
-
-
+BEGIN
+    DECLARE status_produto CHAR(1);
+    SELECT STATUS INTO status_produto FROM produto WHERE id = id_produto;
+    IF status_produto = 'n' OR status_produto = 'N' THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'PRODUTO INATIVO';
+    ELSE
+        INSERT INTO produto (venda_id, produto_id, quantidade, preco_unidade, desconto) 
+		VALUES (id_venda, id_produto, quantidade_produto, preco_unidade_produto, desconto_iv);
+        DECLARE quantidade_antiga INT;
+        SELECT estoque INTO quantidade_antiga FROM produto WHERE id = id_produto;
+        UPDATE produto SET estoque = quantidade_antiga - quantidade_produto WHERE id = id_produto;
+	END IF;
+END;
+// DELIMITER ;
 
 
 
@@ -318,13 +332,21 @@ produto. Antes das ações, verifique se o produto é ativo.*/
 03 - Escreva uma procedure que altere o preço de um produto vendido (venda já realizada - necessário
 verificar a existência da venda). Não permita altearções abusivas - preço de venda abaixo do preço de
 custo. É possível implementar esta funcionalidade sem a procedure? Se sim, indique como, bem como
-as vantagens e desvantagens.
+as vantagens e desvantagens.*/
+
+
+
+
+/*
 04 - Escreva uma procedure que registre vendas de produtos e já defina o total da venda. É possível
 implementar a mesma funcionalidade por meio da trigger? Qual seria a diferença?
 05- Para o controle de salário de funcionários de uma empresa e os respectivos adiantamentos (vales):
 - quais tabelas são necessárias?
+
+
 06- De acordo com o seu projeto de banco de dados, pense em pelo menos 3 procedures úteis. Discuta
 com os seus colegas em relação a relevância e implemente-as.
-07- Explique as diferenças entre trigger, função e procedure. Indique as vantagens e desvantagens em
-utilizar a procedure.
-*/
+
+
+/*07- Explique as diferenças entre trigger, função e procedure. Indique as vantagens e desvantagens em
+utilizar a procedure.*/
