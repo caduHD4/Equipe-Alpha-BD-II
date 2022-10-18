@@ -9,8 +9,6 @@ INTEGRANTES:
 Carlos Eduardo Mariano Garcia Pereira
 email: cadumarianogarciapereira@gmail.com
 
-Gilberto Reis Pereira De Souza Junior
-
 Marcos Felipe Da Silva Ribeiro
 email: mcfelipe_pvai@hotmail.com
 
