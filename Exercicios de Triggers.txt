@@ -169,6 +169,38 @@ INSERT INTO ordem_serviço (valor,descriçao,pagamento,cliente_id,funcionario_id
 INSERT INTO ordem_serviço (valor,descriçao,pagamento,cliente_id,funcionario_id) VALUES (500.00,'Troca de Cabeamento Elétrico','parcelado',3,2);
 INSERT INTO ordem_serviço (valor,descriçao,pagamento,cliente_id,funcionario_id) VALUES (1000.00,'Instação do Quadro de Distribuição de Energia','avista',4,3);
 
+CREATE TABLE forma_pagamento(
+id INT NOT NULL AUTO_INCREMENT
+,descriçao VARCHAR (200) NOT NULL
+,quantidade_parcela INT
+,entrada CHAR (1)
+,situaçao CHAR (1)
+,data_cadastro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+,CONSTRAINT pk_forma_pagamento PRIMARY KEY (id)
+);
+
+CREATE TABLE conta_receber(
+id INT NOT NULL AUTO_INCREMENT
+,data_cadastro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+,forma_pagamento_id INT NOT NULL
+,ordem_serviço_id INT NOT NULL
+,CONSTRAINT pk_conta_receber PRIMARY KEY (id)
+,CONSTRAINT fk_conta_receber_forma_pagamento FOREIGN KEY (forma_pagamento_id) REFERENCES forma_pagamento(id)
+,CONSTRAINT fk_conta_receber_ordem_serviço FOREIGN KEY (ordem_serviço_id ) REFERENCES ordem_serviço (id)
+);
+
+CREATE TABLE parcela_receber(
+id INT NOT NULL AUTO_INCREMENT
+,valor DECIMAL (9,2)
+,valor_quitado DECIMAL (9,2)
+,juros_pago DECIMAL (9,2)
+,vencimento DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+,conta_receber_id INT NOT NULL
+,CONSTRAINT pk_parcela_receber PRIMARY KEY (id)
+,CONSTRAINT fk_parcela_receber_conta_receber FOREIGN KEY (conta_receber_id) REFERENCES conta_receber (id)
+);
+
+
 CREATE TABLE fornecedor(
 id INT NOT NULL AUTO_INCREMENT
 ,nome VARCHAR (200) NOT NULL
@@ -345,7 +377,8 @@ id INT NOT NULL AUTO_INCREMENT
 ,CONSTRAINT recebimento_unico UNIQUE (venda_id,iten_caixa_id)
 );
 
-INSERT INTO recebimento (especie, desconto ,sem_desconto,venda_id ,ten_caixa_id) VALUES ("avista",850.00,950.00,1,1);
+INSERT INTO recebimento (especie, desconto ,sem_desconto,venda_id ,iten_caixa_id) VALUES ("avista",850.00,950.00,1,1);
+
 
 
 01- Escreva quarto triggers de sintaxe - a trigger não precisa ter funcionalidade, basta não dar erro de sintaxe. Use variável global para testar.
