@@ -465,6 +465,84 @@ END;
 
 03 - Escreva uma procedure que altere o preço de um produto vendido (venda já realizada - necessário verificar a existência da venda). Não permita altearções abusivas - preço de venda abaixo do preço de custo. É possível implementar esta funcionalidade sem a procedure? Se sim, indique como, bem como as vantagens e desvantagens.
 
+DELIMITER //
+CREATE TRIGGER atualiza_total_venda
+AFTER 
+INSERT ON item_venda FOR EACH ROW
+	BEGIN
+		DECLARE total_x DECIMAL(8,2);
+		SELECT total INTO total_x FROM venda WHERE id = NEW.venda_id;
+		UPDATE venda SET total = total_x + (NEW.preco_unidade * NEW.quantidade);
+	END;
+//
+DELIMITER ;
+
+
+INSERT ON venda (cliente_id) VALUES (1);
+INSERT ON item_venda (produto_id, venda_id, quantidade, preco_unidade) VALUES (1, 1, 4, 5.99);
+INSERT ON item_venda (produto_id, venda_id, quantidade, preco_unidade) VALUES (3, 1, 3, 1.99);
+
+INSERT ON venda (cliente_id) VALUES (2);
+INSERT ON item_venda (produto_id, venda_id, quantidade, preco_unidade) VALUES (1, 2, 4, 5.99);
+INSERT ON item_venda (produto_id, venda_id, quantidade, preco_unidade) VALUES (2, 2, 6, 1.50);
+
+INSERT ON venda (cliente_id) VALUES (3);
+INSERT ON item_venda (produto_id, venda_id, quantidade, preco_unidade) VALUES (1, 3, 2, 5.99);
+INSERT ON item_venda (produto_id, venda_id, quantidade, preco_unidade) VALUES (2, 3, 1, 1.50);
+
+INSERT ON venda (cliente_id) VALUES (4);
+INSERT ON item_venda (produto_id, venda_id, quantidade, preco_unidade) VALUES (3, 4, 8, 1.99);
+INSERT ON item_venda (produto_id, venda_id, quantidade, preco_unidade) VALUES (1, 4, 5, 5.99);
+
+DELIMITER //
+CREATE PROCEDURE altera_preco_vendido(id_venda, n_preco, id_produto)
+	BEGIN
+		DECLARE existe_venda INT;
+		SELECT id INTO existe_venda FROM venda WHERE id_venda = id;
+			IF existe_venda = NULL THEN
+				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT "VENDA NÃO EXISTE!";
+			ELSE
+				DECLARE pc DECIMAL(8,2);
+				SELECT preco_custo INTO pc FROM produto WHERE id_produto = id;
+				IF pc > n_preco THEN
+					SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT "ALTERAÇÃO ABUSIVA!";
+				ELSE
+					DECLARE preco_antigo DECIMAL (8,2);
+					DECLARE quantidade_antiga INT;
+
+					SELECT preco_unidade, quantidade INTO preco_antigo, quantidade_antiga FROM item_venda WHERE id_venda = venda_id and id_produto = produto_id;
+					UPDATE item_venda SET preco_unidade = (n_preco) WHERE id_venda = venda_id and id_produto = produto_id;
+
+					DECLARE total_antigo DECIMAL (8,2);
+					SELECT total INTO total_antigo FROM venda WHERE id = id_venda;
+					UPDATE venda SET total = total_antigo - ((preco_antigo * quantidade_antiga) - (n_preco * quantidade_antiga));
+					
+				END IF;
+			END IF;
+	END;
+// 
+DELIMITER ;
+
+
+
+CREATE TABLE venda(
+id INT NOT NULL AUTO_INCREMENT
+,data_venda DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+,cliente_id INT NOT NULL
+,total DECIMAL(8,2) DEFAULT 0
+,CONSTRAINT pk_venda PRIMARY KEY (id)
+,CONSTRAINT fk_venda_cliente FOREIGN KEY (cliente_id) REFERENCES cliente (id)
+);
+
+CREATE TABLE item_venda(
+produto_id INT NOT NULL
+,venda_id INT NOT NULL
+,quantidade INT NOT NULL 
+,preco_unidade DECIMAL(8,2) NOT NULL 
+,total_item DECIMAL(8,2) AS (quantidade * preco_unidade) STORED
+);
+
+
 04 - Escreva uma procedure que registre vendas de produtos e já defina o total da venda. É possível implementar a mesma funcionalidade por meio da trigger? Qual seria a diferença?
 
 05- Para o controle de salário de funcionários de uma empresa e os respectivos adiantamentos (vales):
