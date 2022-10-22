@@ -639,3 +639,18 @@ SET @Preco = (SELECT preço FROM produto WHERE id = produto_id);
 CALL imperdir_venda(1,1,2,@Preco);
 
 07- Explique as diferenças entre trigger, função e procedure. Indique as vantagens e desvantagens em utilizar a procedure.
+
+Qual a diferença entre eles?: 
+As funções são muito semelhantes aos procedimentos, o que os difere, do ponto de vista estrutural, é a inclusão da cláusula RETURN. (PUGA; FRANÇA; GOYA, 2014, p. 281).
+
+Segundo KAMAKAWA, H.(2020) as funções possuem retorno, enquanto que as procedures podem possuir variáveis de saída declaradas como “OUT” , que são diferentes dos retornos das funções, pois estas não podem ser atribuídas a uma variável externa como os retornos das funções podem. Ainda, segundo o autor, nas procedures podem ser utilizadas também variáveis globais antecedidas por @, que podem assim serem acessadas de fora dos procedimentos. Outra diferença entre funções e procedures está no momento de invocá-las, pois enquanto as funções são chamadas pelo comando SELECT as procedures são chamadas pelo comando CALL. 
+
+Procedure
+Não tem retorno
+É necessário fazer a chamada pelo comando 'CALL';
+Não pode ser chamada pelo comando SELECT;
+Pode mudar o estado do BD.
+
+Uma procedure é um bloco de comandos ou instruções organizadas para executar uma ou mais tarefas. Ela pode ser utilizada para ser acionada através de uma chamada simples que executa uma série de outros comandos.
+
+
