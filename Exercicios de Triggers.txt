@@ -189,17 +189,20 @@ id INT NOT NULL AUTO_INCREMENT
 ,CONSTRAINT fk_conta_receber_ordem_serviço FOREIGN KEY (ordem_serviço_id ) REFERENCES ordem_serviço (id)
 );
 
+
+
 CREATE TABLE parcela_receber(
 id INT NOT NULL AUTO_INCREMENT
 ,valor DECIMAL (9,2)
 ,valor_quitado DECIMAL (9,2)
 ,juros_pago DECIMAL (9,2)
-,vencimento DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+,vencimento DATETIME NOT NULL
 ,conta_receber_id INT NOT NULL
 ,CONSTRAINT pk_parcela_receber PRIMARY KEY (id)
 ,CONSTRAINT fk_parcela_receber_conta_receber FOREIGN KEY (conta_receber_id) REFERENCES conta_receber (id)
 );
 
+INSERT INTO parcela_receber (valor, valor_quitado, juros_pago, vencimento, conta_receber_id) VALUES (950.00,0,0,'2021-10-05',1);
 
 CREATE TABLE fornecedor(
 id INT NOT NULL AUTO_INCREMENT
@@ -370,14 +373,16 @@ id INT NOT NULL AUTO_INCREMENT
 ,data_cadastro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ,venda_id INT NOT NULL
 ,iten_caixa_id INT NOT NULL
+,parcela_receber_id INT NOT NULL
 ,CONSTRAINT pk_recebimento PRIMARY KEY (id)
 ,CONSTRAINT fk_recebimento_venda FOREIGN KEY (venda_id) REFERENCES venda (id)
 ,CONSTRAINT fk_recebimento_iten_caixa FOREIGN KEY (iten_caixa_id) REFERENCES iten_caixa (id)
+,CONSTRAINT fk_recebimento_parcela_receber FOREIGN KEY (parcela_receber_id) REFERENCES parcela_receber(id)
 ,CONSTRAINT coluna_situaçao_recebimento CHECK (situaçao IN ('E','N')) -- E = Efetuado ou N = Não Efetuado
-,CONSTRAINT recebimento_unico UNIQUE (venda_id,iten_caixa_id)
+,CONSTRAINT recebimento_unico UNIQUE (venda_id,iten_caixa_id,parcela_receber_id)
 );
 
-INSERT INTO recebimento (especie, desconto ,sem_desconto,venda_id ,iten_caixa_id) VALUES ("avista",850.00,950.00,1,1);
+INSERT INTO recebimento (especie, desconto ,sem_desconto,venda_id ,iten_caixa_id, parcela_receber_id) VALUES ("avista",850.00,950.00,1,1,1);
 
 
 
