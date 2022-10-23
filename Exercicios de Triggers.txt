@@ -597,7 +597,7 @@ DELIMITER ;
 
 DELIMITER //
 CREATE TRIGGER venda_estoque
-BEFORE INSERT ON iten_venda
+AFTER INSERT ON iten_venda
 FOR EACH ROW
 BEGIN
 		DECLARE estocagem INT;
@@ -623,6 +623,7 @@ BEGIN
 END;
 //
 DELIMITER ;
+
 
 SELECT estoque,situaçao FROM produto;
 
