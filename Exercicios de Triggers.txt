@@ -604,7 +604,7 @@ BEGIN
         DECLARE quantia INT;
        
 		SELECT quantidade INTO quantia FROM iten_venda; 
-        SELECT estoque INTO estocagem FROM produto WHERE id = NEW.produto_id;
+        SELECT estoque INTO estocagem FROM produto WHERE produto.id = NEW.produto_id;
         
       	IF quantia > estocagem THEN
 			BEGIN
@@ -612,6 +612,7 @@ BEGIN
 			END;
 		ELSEIF quantia = estocagem THEN
 			BEGIN
+				UPDATE produto SET estoque = estoque - NEW.quantidade  WHERE produto.id = NEW.produto_id;
 				UPDATE produto SET situaçao = 'E' WHERE produto.id = NEW.produto_id;
             END;
 		ELSE
