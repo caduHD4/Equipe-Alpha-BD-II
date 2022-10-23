@@ -592,15 +592,17 @@ DELIMITER ;
 
 06- De acordo com o seu projeto de banco de dados, pense em pelo menos 3 triggers úteis. Discuta com os seus colegas em relação à relevância e implemente-as.
 
+Primeira Trigger --Criada com o intuito de atualização do estoque dos produtos conforme a quantidade da venda por unidade.
+
 DELIMITER //
 CREATE TRIGGER venda_estoque
 AFTER INSERT ON iten_venda
 FOR EACH ROW
 BEGIN
-		DECLARE estocagem INT;
+	DECLARE estocagem INT;
         DECLARE quantia INT;
        
-		SELECT quantidade INTO quantia FROM iten_venda; 
+	SELECT quantidade INTO quantia FROM iten_venda; 
         SELECT estoque INTO estocagem FROM produto WHERE produto.id = NEW.produto_id;
         
       	IF quantia > estocagem THEN
@@ -624,19 +626,21 @@ DELIMITER ;
 
 SELECT estoque,situaçao FROM produto;
 
+Segunda Trigger -- Criada para separação dos tipos de recebimento e atualizações das tabelas conforme a espécie de recebimento.
+
 DELIMITER //
 CREATE TRIGGER valor_recebimento_iten_caixa
-BEFORE INSERT ON recebimento
+AFTER INSERT ON recebimento
 FOR EACH ROW
 BEGIN
 	DECLARE tipo VARCHAR (45);
     
-    SELECT especie INTO tipo FROM recebimento WHERE id = NEW.recebimento_id;
+    SELECT especie INTO tipo FROM recebimento;
     
 	IF tipo = "avista" THEN
 		UPDATE iten_caixa SET valor_novo = valor_novo + valor + NEW.desconto WHERE id = NEW.iten_caixa_id;
     ELSE
-		UPDATE iten_caixa SET valor_novo = valor_novo + valor + NEW.sem_desconto WHERE id = NEW.iten_caixa_id;
+		UPDATE parcela_receber SET valor = valor + NEW.sem_desconto WHERE id = NEW.iten_caixa_id;
 	END IF;
 END;
 //
