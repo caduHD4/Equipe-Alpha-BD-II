@@ -1,4 +1,4 @@
- DROP DATABASE IF EXISTS marcos_db;
+DROP DATABASE IF EXISTS marcos_db;
 
 CREATE DATABASE marcos_db;
 
@@ -159,10 +159,12 @@ id INT NOT NULL AUTO_INCREMENT
 ,CONSTRAINT ordem_serviço_unico UNIQUE (cliente_id,funcionario_id)
 );
 
+
 INSERT INTO ordem_serviço (valor,descriçao,pagamento,cliente_id,funcionario_id) VALUES (150.00,'Troca e Remanejamento de Tomadas','avista',1,2);
 INSERT INTO ordem_serviço (valor,descriçao,pagamento,cliente_id,funcionario_id) VALUES (250.00,'Instalação de Luminárias','avista',2,1);
 INSERT INTO ordem_serviço (valor,descriçao,pagamento,cliente_id,funcionario_id) VALUES (500.00,'Troca de Cabeamento Elétrico','parcelado',3,2);
 INSERT INTO ordem_serviço (valor,descriçao,pagamento,cliente_id,funcionario_id) VALUES (1000.00,'Instação do Quadro de Distribuição de Energia','avista',4,3);
+
 
 CREATE TABLE forma_pagamento(
 id INT NOT NULL AUTO_INCREMENT
@@ -174,6 +176,8 @@ id INT NOT NULL AUTO_INCREMENT
 ,CONSTRAINT pk_forma_pagamento PRIMARY KEY (id)
 );
 
+INSERT INTO forma_pagamento (descriçao, quantidade_parcela,entrada,situaçao ) VALUES ("Devedor",5,'S','N');
+
 CREATE TABLE conta_receber(
 id INT NOT NULL AUTO_INCREMENT
 ,data_cadastro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -184,16 +188,25 @@ id INT NOT NULL AUTO_INCREMENT
 ,CONSTRAINT fk_conta_receber_ordem_serviço FOREIGN KEY (ordem_serviço_id ) REFERENCES ordem_serviço (id)
 );
 
+
+INSERT INTO conta_receber (forma_pagamento_id, ordem_serviço_id) VALUES (1,1);
+
+
 CREATE TABLE parcela_receber(
 id INT NOT NULL AUTO_INCREMENT
 ,valor DECIMAL (9,2)
 ,valor_quitado DECIMAL (9,2)
 ,juros_pago DECIMAL (9,2)
-,vencimento DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+,vencimento DATETIME NOT NULL
 ,conta_receber_id INT NOT NULL
+,cliente_id INT NOT NULL
 ,CONSTRAINT pk_parcela_receber PRIMARY KEY (id)
 ,CONSTRAINT fk_parcela_receber_conta_receber FOREIGN KEY (conta_receber_id) REFERENCES conta_receber (id)
+,CONSTRAINT fk_parcela_receber_cliente FOREIGN KEY (cliente_id ) REFERENCES cliente (id)
 );
+
+
+INSERT INTO parcela_receber (valor, valor_quitado, juros_pago, vencimento, conta_receber_id,cliente_id ) VALUES (950.00,0,0,'2021-10-05',1,1);
 
 
 CREATE TABLE fornecedor(
@@ -347,10 +360,11 @@ venda_id INT NOT NULL
 ,CONSTRAINT fk_iten_venda_produto_id FOREIGN KEY (produto_id) REFERENCES produto (id)
 );
 
-INSERT INTO iten_venda (venda_id, produto_id,quantidade,preco,desconto) VALUES (1,1,1,400.00,200.00);
-INSERT INTO iten_venda (venda_id, produto_id,quantidade,preco,desconto) VALUES (4,1,2,450.00,350.00);
-INSERT INTO iten_venda (venda_id, produto_id,quantidade,preco,desconto) VALUES (2,1,5,600.00,500.00);
-INSERT INTO iten_venda (venda_id, produto_id,quantidade,preco,desconto) VALUES (3,1,3,1075.00,1000.00);
+
+INSERT INTO iten_venda (venda_id, produto_id,quantidade,preco,desconto) VALUES (1,1,2,400.00,200.00);
+INSERT INTO iten_venda (venda_id, produto_id,quantidade,preco,desconto) VALUES (2,2,1,450.00,350.00);
+INSERT INTO iten_venda (venda_id, produto_id,quantidade,preco,desconto) VALUES (3,3,1,600.00,500.00);
+INSERT INTO iten_venda (venda_id, produto_id,quantidade,preco,desconto) VALUES (4,4,3,1075.00,1000.00);
 
 
 CREATE TABLE recebimento(
@@ -365,14 +379,19 @@ id INT NOT NULL AUTO_INCREMENT
 ,data_cadastro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ,venda_id INT NOT NULL
 ,iten_caixa_id INT NOT NULL
+,parcela_receber_id INT NOT NULL
 ,CONSTRAINT pk_recebimento PRIMARY KEY (id)
 ,CONSTRAINT fk_recebimento_venda FOREIGN KEY (venda_id) REFERENCES venda (id)
 ,CONSTRAINT fk_recebimento_iten_caixa FOREIGN KEY (iten_caixa_id) REFERENCES iten_caixa (id)
+,CONSTRAINT fk_recebimento_parcela_receber FOREIGN KEY (parcela_receber_id) REFERENCES parcela_receber(id)
 ,CONSTRAINT coluna_situaçao_recebimento CHECK (situaçao IN ('E','N')) -- E = Efetuado ou N = Não Efetuado
-,CONSTRAINT recebimento_unico UNIQUE (venda_id,iten_caixa_id)
+,CONSTRAINT recebimento_unico UNIQUE (venda_id,iten_caixa_id,parcela_receber_id)
 );
 
-INSERT INTO recebimento (especie, desconto ,sem_desconto,venda_id ,iten_caixa_id) VALUES ("avista",850.00,950.00,1,1);
+
+INSERT INTO recebimento (especie, desconto ,sem_desconto,venda_id ,iten_caixa_id, parcela_receber_id) VALUES ("avista",850.00,950.00,1,1,1);
+
+
 
 01- Escreva quarto procedures de sintaxe - não precisa ter funcionalidade, basta não dar erro de sintaxe. Use variável global para testar.
 
@@ -553,6 +572,8 @@ produto_id INT NOT NULL
 
 06- De acordo com o seu projeto de banco de dados, pense em pelo menos 3 procedures úteis. Discuta com os seus colegas em relação a relevância e implemente-as.
 
+Primeira Procedure -- Criada para verificação de dados e evitar cadastros de colunas com redundancia de informações nas tabelas.
+
 DELIMITER //
 CREATE PROCEDURE produto_verificar(pid INT, pnome VARCHAR (200))
 BEGIN
@@ -589,12 +610,14 @@ DELIMITER ;
 
 CALL produto_verificar(1,'Disjuntor Monopolar  25A');
 
+Segunda Procedure -- Criada para atualização de dados nas tabelas cadastradas
+
 DELIMITER //
 CREATE PROCEDURE produto_Update(p_id INT, p_nome VARCHAR(200), p_preço DECIMAL (9,2))
 BEGIN 
 	
     DECLARE produto_nome  VARCHAR(200);
-	DECLARE produto_preço  DECIMAL (9,2);
+    DECLARE produto_preço  DECIMAL (9,2);
 
     
     SELECT nome INTO produto_nome FROM produto WHERE nome = p_nome;
@@ -611,6 +634,8 @@ END;
 DELIMITER ;
 
 CALL produto_Update(2, 'Eletroudo de 1/2 polegada"', '150.00');
+
+Terceira Triiger - Criada para impedir a realização das vendas de produtos esgotados ou devida a baixa de estoque frente a quantidade de venda superior.
 
 DELIMITER //
 CREATE PROCEDURE imperdir_venda (id_venda INT,id_produto INT, quantidade INT, preco_unidade DECIMAL(9,2) )
