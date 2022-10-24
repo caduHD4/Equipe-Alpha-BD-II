@@ -159,10 +159,12 @@ id INT NOT NULL AUTO_INCREMENT
 ,CONSTRAINT ordem_serviço_unico UNIQUE (cliente_id,funcionario_id)
 );
 
+
 INSERT INTO ordem_serviço (valor,descriçao,pagamento,cliente_id,funcionario_id) VALUES (150.00,'Troca e Remanejamento de Tomadas','avista',1,2);
 INSERT INTO ordem_serviço (valor,descriçao,pagamento,cliente_id,funcionario_id) VALUES (250.00,'Instalação de Luminárias','avista',2,1);
 INSERT INTO ordem_serviço (valor,descriçao,pagamento,cliente_id,funcionario_id) VALUES (500.00,'Troca de Cabeamento Elétrico','parcelado',3,2);
 INSERT INTO ordem_serviço (valor,descriçao,pagamento,cliente_id,funcionario_id) VALUES (1000.00,'Instação do Quadro de Distribuição de Energia','avista',4,3);
+
 
 CREATE TABLE forma_pagamento(
 id INT NOT NULL AUTO_INCREMENT
@@ -186,7 +188,9 @@ id INT NOT NULL AUTO_INCREMENT
 ,CONSTRAINT fk_conta_receber_ordem_serviço FOREIGN KEY (ordem_serviço_id ) REFERENCES ordem_serviço (id)
 );
 
+
 INSERT INTO conta_receber (forma_pagamento_id, ordem_serviço_id) VALUES (1,1);
+
 
 CREATE TABLE parcela_receber(
 id INT NOT NULL AUTO_INCREMENT
@@ -195,11 +199,15 @@ id INT NOT NULL AUTO_INCREMENT
 ,juros_pago DECIMAL (9,2)
 ,vencimento DATETIME NOT NULL
 ,conta_receber_id INT NOT NULL
+,cliente_id INT NOT NULL
 ,CONSTRAINT pk_parcela_receber PRIMARY KEY (id)
 ,CONSTRAINT fk_parcela_receber_conta_receber FOREIGN KEY (conta_receber_id) REFERENCES conta_receber (id)
+,CONSTRAINT fk_parcela_receber_cliente FOREIGN KEY (cliente_id ) REFERENCES cliente (id)
 );
 
-INSERT INTO parcela_receber (valor, valor_quitado, juros_pago, vencimento, conta_receber_id) VALUES (950.00,0,0,'2021-10-05',1);
+
+INSERT INTO parcela_receber (valor, valor_quitado, juros_pago, vencimento, conta_receber_id,cliente_id ) VALUES (950.00,0,0,'2021-10-05',1,1);
+
 
 CREATE TABLE fornecedor(
 id INT NOT NULL AUTO_INCREMENT
@@ -380,7 +388,9 @@ id INT NOT NULL AUTO_INCREMENT
 ,CONSTRAINT recebimento_unico UNIQUE (venda_id,iten_caixa_id,parcela_receber_id)
 );
 
+
 INSERT INTO recebimento (especie, desconto ,sem_desconto,venda_id ,iten_caixa_id, parcela_receber_id) VALUES ("avista",850.00,950.00,1,1,1);
+
 
 
 01- Escreva quarto triggers de sintaxe - a trigger não precisa ter funcionalidade, basta não dar erro de sintaxe. Use variável global para testar.
@@ -646,14 +656,23 @@ END;
 //
 DELIMITER ;
 
+Terceira Trigger -- Criada para impossibilitar a exclusão dos dados de um cliente que parcelou ou possui parcelas em aberto
+
 DELIMITER //
-CREATE TRIGGER saldo_final_caixa
-AFTER UPDATE ON iten_caixa
+CREATE TRIGGER divida_clinte
+BEFORE DELETE ON ordem_serviço
 FOR EACH ROW
 BEGIN
+
+	DECLARE especie VARCHAR (10);
 	
-	INSERT INTO iten_caixa (valor, valor_novo, especie, caixa_id) VALUES (OLD.valor, NEW.valor_novo, NEW.especie, NEW.caixa_id);
-	UPDATE caixa SET saldo_final= saldo_final + saldo + NEW.valor_novo WHERE id = NEW.caixa_id;
+    SELECT pagamento INTO especie FROM ordem_serviço WHERE ordem_serviço.id = ordem_serviço_id;
+    
+	IF especie = 'parcelado' THEN
+			BEGIN
+				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Impossivel deletar os dados do cliente, pois possui parcelamento em aberto";
+			END;
+      	END IF;
 END;
 //
 DELIMITER ;
