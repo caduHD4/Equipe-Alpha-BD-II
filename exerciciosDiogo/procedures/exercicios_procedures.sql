@@ -13525,8 +13525,6 @@ BEGIN
 	END IF;
 END;
 // DELIMITER ;
-
-
 -- 03 - Escreva uma procedure que altere o preço de um produto vendido (venda já realizada - necessário verificar a existência da venda). Não permita altearções abusivas - preço de venda abaixo do preço de custo. É possível implementar esta funcionalidade sem a procedure? Se sim, indique como, bem como as vantagens e desvantagens.
 -- 04 - Escreva uma procedure que registre vendas de produtos e já defina o total da venda. É possível implementar a mesma funcionalidade por meio da trigger? Qual seria a diferença?
 -- 05- Para o controle de salário de funcionários de uma empresa e os respectivos adiantamentos
