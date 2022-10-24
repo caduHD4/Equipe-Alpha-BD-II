@@ -72,6 +72,7 @@ id INT NOT NULL AUTO_INCREMENT
 CREATE TABLE venda(
 id INT NOT NULL AUTO_INCREMENT
 ,data_venda DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+,total DECIMAL(8,2);
 ,cliente_id INT NOT NULL 
 ,CONSTRAINT pk_venda PRIMARY KEY (id)
 ,CONSTRAINT fk_venda_cliente FOREIGN KEY (cliente_id) REFERENCES cliente (id)
@@ -83,6 +84,7 @@ produto_id INT NOT NULL
 ,quantidade INT NOT NULL 
 ,preco_unidade DECIMAL(8,2) NOT NULL 
 ,total_item DECIMAL(8,2) AS (quantidade * preco_unidade) STORED
+,CONSTRAINT fk_venda_item FOREIGN KEY (venda_id) REFERENCES venda (id)
 );
 
 CREATE TABLE fornecedor (
@@ -309,7 +311,7 @@ SELECT @teste4;
 produto. Antes das ações, verifique se o produto é ativo.*/
 
 DELIMITER //
-CREATE PROCEDURE inserir_item_venda(id_venda, id_produto, quantidade_produto, preco_unidade_produto, desconto_iv)
+CREATE PROCEDURE inserir_item_venda(id_venda INT, id_produto INT, quantidade_produto INT, preco_unidade_produto DECIMAL(8,2), desconto_iv INT)
 
 BEGIN
     DECLARE status_produto CHAR(1);
@@ -367,7 +369,7 @@ INSERT ON item_venda (produto_id, venda_id, quantidade, preco_unidade) VALUES (3
 INSERT ON item_venda (produto_id, venda_id, quantidade, preco_unidade) VALUES (1, 4, 5, 5.99);
 
 DELIMITER //
-CREATE PROCEDURE altera_preco_vendido(id_venda, n_preco, id_produto)
+CREATE PROCEDURE altera_preco_vendido(id_venda INT, n_preco DECIMAL(8,2), id_produto INT)
 	BEGIN
 		DECLARE existe_venda INT;
 		SELECT id INTO existe_venda FROM venda WHERE id_venda = id;
@@ -418,13 +420,27 @@ produto_id INT NOT NULL
 
 /*
 04 - Escreva uma procedure que registre vendas de produtos e já defina o total da venda. É possível
-implementar a mesma funcionalidade por meio da trigger? Qual seria a diferença?*/
+implementar a mesma funcionalidade por meio da trigger? Qual seria a diferença? R: É possivel, a diferença seria
+que ele sempre será acionado depois depois de uma inserção na tqabela item_venda.*/
+
+DELIMITER //
+CREATE PROCEDURE regista_venda_total (id_venda INT, id_produto INT, quantidadeT INT, preco_unidadeT DECIMAL(8,2))
+	BEGIN
+		INSERT ON item_venda (venda_id, produto_id, quantidade, preco_unidade)
+		VALUES (id_venda, id_produto, quantidadeT, preco_unidadeT);
+		INSERT ON venda SET total = (preco_unidadeT * quantidadeT) WHERE id_venda = venda_id;
+	END;
+
+//
+DELIMITER ;
+
 
 
 /*
 05- Para o controle de salário de funcionários de uma empresa e os respectivos adiantamentos (vales):
 - quais tabelas são necessárias?
-R: É NECESSARIA A TABELA ADIANTAMENTO QUE TENHA AS COLUNAS, ID, FUNCIONARIO_ID, VALOR, DATA_ADIANTAMENTO.*/
+R: É necessaria a tabela ADIANTAMENTO que tenha as colunas, ID, FUNCIONARIO_ID, VALOR, DATA_ADIANTAMENTO.*/
+
 
 /*
 06- De acordo com o seu projeto de banco de dados, pense em pelo menos 3 procedures úteis. Discuta
