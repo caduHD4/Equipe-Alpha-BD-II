@@ -418,18 +418,60 @@ produto_id INT NOT NULL
 
 /*
 04 - Escreva uma procedure que registre vendas de produtos e já defina o total da venda. É possível
-implementar a mesma funcionalidade por meio da trigger? Qual seria a diferença?
+implementar a mesma funcionalidade por meio da trigger? Qual seria a diferença?*/
 
 
-
+/*
 05- Para o controle de salário de funcionários de uma empresa e os respectivos adiantamentos (vales):
 - quais tabelas são necessárias?
-É NECESSARIA A TABELA ADIANTAMENTO QUE TENHA AS COLUNAS, ID, FUNCIONARIO_ID, VALOR, DATA_ADIANTAMENTO.
+R: É NECESSARIA A TABELA ADIANTAMENTO QUE TENHA AS COLUNAS, ID, FUNCIONARIO_ID, VALOR, DATA_ADIANTAMENTO.*/
 
-
+/*
 06- De acordo com o seu projeto de banco de dados, pense em pelo menos 3 procedures úteis. Discuta
-com os seus colegas em relação a relevância e implemente-as.
+com os seus colegas em relação a relevância e implemente-as.*/
 
 
 /*07- Explique as diferenças entre trigger, função e procedure. Indique as vantagens e desvantagens em
-utilizar a procedure.*/
+utilizar a procedure.
+
+O que todos eles tem em comum - Sintaxe com utilização de CREATE, DELIMITER, BEGIN, END.
+
+Funções e Procedures:
+
+Segundo KAMAKAWA, H.(2020) as funções possuem retorno (return), enquanto que as procedures
+podem possuir variáveis de saída declaradas como “OUT” , que são diferentes dos retornos
+das funções, pois estas não podem ser atribuídas a uma variável externa como os retornos
+das funções podem. Enquanto as funções são chamadas pelo comando SELECT as procedures são
+chamadas pelo comando CALL.
+
+Função:
+- Tem apenas um retorno.
+- Pode usar SELECT.
+- Não pode CALL.
+- Não pode mudar o estado do BD.
+- Possue somente paramâtros de entrada.
+
+Procedure:
+- Não tem retorno
+- Usa CALL para chamar
+- Não pode SELECT pra chamar
+- Pode usar: INSERT, UPDATE, DELETE ou SELECT.
+- Pode ter parâmetro "tradicional" ou "parâmetro de saída".
+- Pode mudar o estado do BD.
+
+
+Triggers:
+- Gerar uma AÇÃO associado a uma operação - Automatizar uma ação
+(um módulo de bloco de código).
+- É chamado automaticamente.
+
+Aqui temos comandos que devem ser especificados na sintaxe antes de qualquer alterção, inserção e exclusão,
+AFTER/BEFORE - Será executado depois ou antes da ação.
+Utilização de .OLD e .NEW - O dado antigo e o dado novo que foi informado.
+
+Vantagem:
+Processamento local - velocidade, acesso aos dados locais.
+Centralização da ação - poupar recursos da máquina do cliente e facilitar a manutenção.
+*/
+
+
