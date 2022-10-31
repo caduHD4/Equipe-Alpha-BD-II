@@ -126,7 +126,7 @@ Tmarca VARCHAR(14), Tpreco DECIMAL(10,2), Tvalidade DATETIME,Testoque INT, id_fi
 DELIMITER
 
 CALL insert_remedio ('Dorflex', 'Adeus dor de cabeça', 'relaxante muscular', 'ele mesmo', 15.99, '2023-07-25', 80, 1)
-SELECT * from remedio
+
 
 
 
