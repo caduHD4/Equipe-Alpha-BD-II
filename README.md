@@ -17,3 +17,6 @@ https://docs.google.com/document/d/14eWd7QDKO3t64lPh_WaD0_pXVkYTG7Ar5o8AkqkEZAU/
 
 Link de autoavaliação do grupo
 https://docs.google.com/spreadsheets/d/1Yhr5Y05GAh2k3B-rByWx1iUHlmzS_TwkHlqlSjBtElI/edit#gid=0
+
+Slides sobre banco de dados orientado a objeto.
+https://docs.google.com/presentation/d/1U6Q-mcJoiDKE6WWXIubiY5H6TLcx8L-xIwAX4CwdHj8/edit#slide=id.g14e25722e69_0_18
