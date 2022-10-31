@@ -127,7 +127,17 @@ DELIMITER
 
 CALL insert_remedio ('Dorflex', 'Adeus dor de cabeça', 'relaxante muscular', 'ele mesmo', 15.99, '2023-07-25', 80, 1)
 
+/*Busca os clientes por id*/
 
+DELIMITER //
+CREATE PROCEDURE buscar_cliente (IN id_cliente)
+	BEGIN
+		SELECT * FROM cliente
+		WHERE pk_cliente=id_cliente;
+	END;
+
+//
+DELIMITER
 
 
 
