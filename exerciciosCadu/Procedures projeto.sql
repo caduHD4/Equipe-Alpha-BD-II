@@ -108,7 +108,7 @@ id INT NOT NULL AUTO_INCREMENT
 );
 
 
-*/Cadastra um novo produto e logo em seguida mostra todos os produtos com as informações/*
+/*Cadastra um novo produto e logo em seguida mostra todos os produtos com as informações*/
 
 DELIMITER //
 CREATE PROCEDURE insert_remedio (Tnome VARCHAR(24), Tdescricao VARCHAR(200), Tremedio_tipo VARCHAR (14),
